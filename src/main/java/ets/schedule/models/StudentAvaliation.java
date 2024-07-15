@@ -13,21 +13,21 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "courses")
-public class Competences extends BaseModel {
+@Table(name = "students_avaliation")
+public class StudentAvaliation extends BaseModel {
 
-    public Competences(String name, Float weight) {
-        this.name = name;
-        this.weight = weight;
+    public StudentAvaliation(String comment) {
+        this.comment = comment;
     }
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "discipline_id", nullable = false)
     private Disciplines discipline;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "student_id", nullable = false)
+    private Disciplines student;
 
-    @Column(name = "weight", nullable = false)
-    private Float weight;
+    @Column(name = "comment", nullable = false)
+    private String comment;
 }

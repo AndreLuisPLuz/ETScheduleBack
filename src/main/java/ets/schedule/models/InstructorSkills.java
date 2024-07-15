@@ -23,7 +23,7 @@ public class InstructorSkills extends BaseModel {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "instructor_id", nullable = false)
-    private Users instructorId;
+    private Users instructor;
 
     @Column(name = "subject", nullable = false)
     private String subject;

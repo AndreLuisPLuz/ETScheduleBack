@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "profile")
+@Table(name = "profiles")
 public class Profiles extends BaseModel {
 
     public Profiles(String role, String consensus) {

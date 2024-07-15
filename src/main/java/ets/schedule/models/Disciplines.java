@@ -24,15 +24,15 @@ public class Disciplines extends BaseModel {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "group_id", nullable = false)
-    private Groups groupId;
+    private Groups group;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "instructor_id", nullable = false)
-    private Users instructorId;
+    private Users instructor;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "course_id", nullable = false)
-    private Courses courseId;
+    private Courses course;
 
     @Column(name = "semester", nullable = false)
     private Integer semester;

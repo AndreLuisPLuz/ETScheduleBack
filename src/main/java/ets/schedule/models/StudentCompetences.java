@@ -15,5 +15,19 @@ import lombok.Setter;
 @Entity
 @Table(name = "student_competences")
 public class StudentCompetences extends BaseModel {
-    
+
+    public StudentCompetences(String degree) {
+        this.degree = degree;
+    }
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "competence_id", nullable = false)
+    private Competences competence;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "student_id", nullable = false)
+    private Users student;
+
+    @Column(name = "degree", nullable = false)
+    private String degree;
 }

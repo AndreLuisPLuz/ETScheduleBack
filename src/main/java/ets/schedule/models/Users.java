@@ -2,6 +2,8 @@ package ets.schedule.models;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -36,6 +38,7 @@ public class Users extends BaseModel {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
+    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
 }
