@@ -31,7 +31,7 @@ public class Events extends BaseModel {
     private Groups group;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "discipline_id", nullable = false)
+    @JoinColumn(name = "discipline_id", nullable = true)
     private Disciplines discipline;
 
     @Column(name = "starts_at", nullable = false)
