@@ -42,6 +42,6 @@ public class Events extends BaseModel {
     @Temporal(TemporalType.TIMESTAMP)
     private Date endsAt;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 }
