@@ -1,5 +1,10 @@
 package ets.schedule.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
-public interface CourseRepository extends JpaRepository {}
+import org.springframework.data.jpa.repository.JpaRepository;
+import ets.schedule.models.Courses;
+
+public interface CourseRepository extends JpaRepository {
+    public List<Courses> findByName(String courseName);
+}

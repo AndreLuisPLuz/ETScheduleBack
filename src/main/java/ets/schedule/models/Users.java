@@ -2,8 +2,6 @@ package ets.schedule.models;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -21,9 +19,9 @@ import lombok.Setter;
 @Table(name = "users")
 public class Users extends BaseModel {
     
-    public Users(String username, Date bithDate, String fullName, String password) {
+    public Users(String username, Date birthDate, String fullName, String password) {
         this.username = username;
-        this.bithDate = bithDate;
+        this.birthDate = birthDate;
         this.fullName = fullName;
         this.password = password;
     }
@@ -31,14 +29,13 @@ public class Users extends BaseModel {
     @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(name = "date_of_birth", nullable = false)
+    @Column(name = "date_of_birth", nullable = true)
     @Temporal(TemporalType.DATE)
-    private Date bithDate;
+    private Date birthDate;
 
-    @Column(name = "full_name", nullable = false)
+    @Column(name = "full_name", nullable = true)
     private String fullName;
 
-    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
 }
