@@ -18,8 +18,9 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 
 import ets.schedule.Exceptions.ApplicationException;
-import ets.schedule.data.payloads.LoginPayload;
+import ets.schedule.data.payloads.login.LoginPayload;
 import ets.schedule.data.responses.AuthResponse;
+import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.AuthService;
 import ets.schedule.interfaces.services.PasswordService;
 import ets.schedule.repositories.UserJPARepository;
@@ -62,6 +63,13 @@ public class Auth0JwtService implements AuthService {
 
         if (passwordsMatch)
             throw new ApplicationException(400, "Passwords do not match.");
+        
+        ProfileRole profileRole;
+        try {
+            profileRole = ProfileRole.getRole(payload.role());
+        } catch (IllegalArgumentException ex) {
+            throw new ApplicationException(400, "Invalid user role.");
+        }
 
         var publicKey = (RSAPublicKey) keyPair.getPublic();
         var privateKey = (RSAPrivateKey) keyPair.getPrivate();
@@ -72,6 +80,7 @@ public class Auth0JwtService implements AuthService {
             token = JWT.create()
                 .withIssuer("Andrezinho")
                 .withClaim("userId", user.getId().toString())
+                .withClaim("role", profileRole.getRole())
                 .withExpiresAt(Instant.now().plusSeconds(28800))
                 .sign(algorithm);
         } catch (JWTCreationException ex) {
