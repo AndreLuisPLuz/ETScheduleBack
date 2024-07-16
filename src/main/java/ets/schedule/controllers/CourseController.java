@@ -4,15 +4,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.models.Courses;
 import ets.schedule.data.HttpList;
-import ets.schedule.data.payloads.CourseCreatePayload;
+import ets.schedule.data.payloads.CoursePayload;
 import ets.schedule.interfaces.services.CourseService;
 
 @RestController
@@ -32,9 +29,19 @@ public class CourseController {
     }
 
     @PostMapping("/api/v1/course")
-    public ResponseEntity<Courses> createCourse(@RequestBody CourseCreatePayload payload) {
+    public ResponseEntity<Courses> createCourse(@RequestBody CoursePayload payload) {
         try {
             var response = courseService.createCourse(payload).get();
+            return ResponseEntity.status(response.statusCode()).body(response.data());
+        } catch(Exception ex) {
+            throw new ApplicationException(500, "Request could not be completed.");
+        }
+    }
+
+    @PutMapping("/api/v1/course")
+    public ResponseEntity<Courses> editCourse(@RequestParam Long id, @RequestBody CoursePayload payload) {
+        try {
+            var response = courseService.editCourse(id, payload).get();
             return ResponseEntity.status(response.statusCode()).body(response.data());
         } catch(Exception ex) {
             throw new ApplicationException(500, "Request could not be completed.");

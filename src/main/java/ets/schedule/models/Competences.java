@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "courses")
+@Table(name = "competences")
 public class Competences extends BaseModel {
 
     public Competences(String name, Float weight) {
