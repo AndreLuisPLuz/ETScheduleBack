@@ -38,7 +38,6 @@ public class Users extends BaseModel {
     @Column(name = "full_name", nullable = true)
     private String fullName;
 
-    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
 }
