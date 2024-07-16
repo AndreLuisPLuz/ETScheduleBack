@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 
 import ets.schedule.data.HttpEntity;
+import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.CourseCreatePayload;
 import ets.schedule.data.responses.UserResponse;
 import ets.schedule.interfaces.services.CourseService;
@@ -20,9 +21,9 @@ public class DefaultCourseService implements CourseService {
     public CourseRepository repo;
 
     @Override
-    public CompletableFuture<HttpEntity<List<Courses>>> getAll() {
+    public CompletableFuture<HttpList<Courses>> getAll() {
         return CompletableFuture.supplyAsync(() -> {
-            return new HttpEntity<>(
+            return new HttpList<Courses>(
                 HttpStatusCode.valueOf(200),
                 repo.findAll()
             );

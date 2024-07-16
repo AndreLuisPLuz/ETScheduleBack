@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.models.Courses;
+import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.CourseCreatePayload;
 import ets.schedule.interfaces.services.CourseService;
 
@@ -23,7 +24,7 @@ public class CourseController {
     @GetMapping("/api/v1/course")
     public ResponseEntity<List<Courses>> getAllCourses() {
         try {
-            var response = courseService.getAll();
+            var response = courseService.getAll().get();
             return ResponseEntity.status(response.statusCode()).body(response.data());
         } catch(Exception ex) {
             throw new ApplicationException(500, "Request could not be completed.");
@@ -31,9 +32,9 @@ public class CourseController {
     }
 
     @PostMapping("/api/v1/course")
-    public ResponseEntity<List<Courses>> createCourse(@RequestBody CourseCreatePayload payload) {
+    public ResponseEntity<Courses> createCourse(@RequestBody CourseCreatePayload payload) {
         try {
-            var response = courseService.createCourse(payload);
+            var response = courseService.createCourse(payload).get();
             return ResponseEntity.status(response.statusCode()).body(response.data());
         } catch(Exception ex) {
             throw new ApplicationException(500, "Request could not be completed.");
