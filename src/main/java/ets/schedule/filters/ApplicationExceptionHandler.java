@@ -12,7 +12,8 @@ import ets.schedule.Exceptions.ApplicationException;
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { ApplicationException.class })
     protected ResponseEntity<Object> handleConflict(
-            ApplicationException ex, WebRequest request
+            ApplicationException ex,
+            WebRequest request
     ) {
         return ResponseEntity.status(ex.getStatusCode()).body(ex.getMessage());
     }
