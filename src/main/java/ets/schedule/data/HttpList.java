@@ -1,8 +1,9 @@
 package ets.schedule.data;
 
 import org.springframework.http.HttpStatusCode;
+import java.util.List;
 
-public record HttpGeneric<T> (
+public record HttpList<T> (
     HttpStatusCode statusCode,
-    T data
+    List<T> data
 ) { }
