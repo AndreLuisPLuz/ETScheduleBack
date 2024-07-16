@@ -1,7 +1,6 @@
 package ets.schedule.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,10 +26,7 @@ public class UserController {
             var response = service.createUserAsync(payload).get();
             return ResponseEntity.status(response.statusCode()).body(response.data());
         } catch(Exception ex) {
-            throw new ApplicationException(
-                HttpStatusCode.valueOf(500),
-                "Request could not be completed."
-            );
+            throw new ApplicationException(500, "Request could not be completed.");
         }
     }
 }

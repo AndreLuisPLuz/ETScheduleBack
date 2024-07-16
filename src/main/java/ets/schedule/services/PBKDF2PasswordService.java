@@ -11,8 +11,6 @@ import java.util.function.IntPredicate;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import org.springframework.http.HttpStatusCode;
-
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.system.PasswordVerification;
 import ets.schedule.interfaces.services.PasswordService;
@@ -37,15 +35,9 @@ public class PBKDF2PasswordService implements PasswordService {
 
             generatedHash = String.format("%s:%s:%s", iterations, toHex(salt), toHex(signature));
         } catch (NoSuchAlgorithmException ex) {
-            throw new ApplicationException(
-                HttpStatusCode.valueOf(500),
-                "Hashing algorithm incorrectly set in server."
-            );
+            throw new ApplicationException(500,"Hashing algorithm incorrectly set in server.");
         } catch (InvalidKeySpecException ex) {
-            throw new ApplicationException(
-                HttpStatusCode.valueOf(500),
-                "Key specification incorrectly set in server."
-            );
+            throw new ApplicationException(500, "Key specification incorrectly set in server.");
         }
 
         return generatedHash;
@@ -72,15 +64,9 @@ public class PBKDF2PasswordService implements PasswordService {
             SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             validationSignature = skf.generateSecret(spec).getEncoded();
         } catch (NoSuchAlgorithmException ex) {
-            throw new ApplicationException(
-                HttpStatusCode.valueOf(500),
-                "Hashing algorithm incorrectly set in server."
-            );
+            throw new ApplicationException(500, "Hashing algorithm incorrectly set in server.");
         } catch (InvalidKeySpecException ex) {
-            throw new ApplicationException(
-                HttpStatusCode.valueOf(500),
-                "Key specification incorrectly set in server."
-            );
+            throw new ApplicationException(500, "Key specification incorrectly set in server.");
         }
 
         return Arrays.equals(signature, validationSignature);

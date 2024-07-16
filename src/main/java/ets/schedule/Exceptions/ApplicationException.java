@@ -13,21 +13,21 @@ public class ApplicationException extends RuntimeException {
     }
 
     public ApplicationException(
-            HttpStatusCode statusCode,
+            int statusCode,
             String message
     ) {
         super();
-        this.statusCode = statusCode;
+        this.statusCode = HttpStatusCode.valueOf(statusCode);
         this.errorResponse = new ErrorResponse(message);
     }
 
     public ApplicationException(
-            HttpStatusCode statusCode,
+            int statusCode,
             String message,
             Throwable cause
     ) {
         super(cause);
-        this.statusCode = statusCode;
+        this.statusCode = HttpStatusCode.valueOf(statusCode);
         this.errorResponse = new ErrorResponse(message);
     }
 
