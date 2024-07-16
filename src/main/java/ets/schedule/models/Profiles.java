@@ -1,5 +1,6 @@
 package ets.schedule.models;
 
+import ets.schedule.enums.ProfileRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -17,7 +18,7 @@ import lombok.Setter;
 public class Profiles extends BaseModel {
 
     public Profiles(String role, String consensus) {
-        this.role = role;
+        this.role = ProfileRole.getRole(role);
         this.consensus = consensus;
     }
 
@@ -30,7 +31,7 @@ public class Profiles extends BaseModel {
     private Groups group;
 
     @Column(name = "role", nullable = false)
-    private String role;
+    private ProfileRole role;
 
     @Column(name = "consensus", nullable = true)
     private String consensus;
