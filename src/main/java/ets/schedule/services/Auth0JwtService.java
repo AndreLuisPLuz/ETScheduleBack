@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,6 +19,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 
 import ets.schedule.Exceptions.ApplicationException;
+import ets.schedule.data.payloads.login.LoginConfirmPayload;
 import ets.schedule.data.payloads.login.LoginPayload;
 import ets.schedule.data.responses.AuthResponse;
 import ets.schedule.enums.ProfileRole;
@@ -46,68 +48,93 @@ public class Auth0JwtService implements AuthService {
     }
 
     @Override
-    public AuthResponse login(LoginPayload payload) {
-        if (keyPair == null) {
-            generateRSAKeyPair();
-        }
-
-        var matchingUsers = userRepo.findByUsername(payload.username());
-        if (matchingUsers.size() == 0)
-            throw new ApplicationException(404, "User not found.");
-
-        var user = matchingUsers.get(0);
-        var passwordsMatch = passwordService.matchPasswords(
-            payload.password(), 
-            user.getPassword()
-        );
-
-        if (passwordsMatch)
-            throw new ApplicationException(400, "Passwords do not match.");
-        
-        ProfileRole profileRole;
-        try {
-            profileRole = ProfileRole.getRole(payload.role());
-        } catch (IllegalArgumentException ex) {
-            throw new ApplicationException(400, "Invalid user role.");
-        }
-
-        var publicKey = (RSAPublicKey) keyPair.getPublic();
-        var privateKey = (RSAPrivateKey) keyPair.getPrivate();
-
-        String token;
-        try {
-            Algorithm algorithm = Algorithm.RSA512(publicKey, privateKey);
-            token = JWT.create()
-                .withIssuer("Andrezinho")
-                .withClaim("userId", user.getId().toString())
-                .withClaim("role", profileRole.getRole())
-                .withExpiresAt(Instant.now().plusSeconds(28800))
-                .sign(algorithm);
-        } catch (JWTCreationException ex) {
-            throw new ApplicationException(500, "Claims couldn't be converted.");
-        }
-
-        return new AuthResponse("Successful login.", token);
+    public CompletableFuture<Boolean> check(LoginConfirmPayload payload) {
+        return CompletableFuture.supplyAsync(() -> {
+            var matchingUsers = userRepo.findByUsername(payload.username());
+            if (matchingUsers.size() == 0)
+                throw new ApplicationException(404, "User not found.");
+    
+            var user = matchingUsers.get(0);
+            var passwordsMatch = passwordService.matchPasswords(
+                payload.password(), 
+                user.getPassword()
+            );
+    
+            if (passwordsMatch)
+                throw new ApplicationException(400, "Passwords do not match.");
+            
+            return true;
+        });
     }
 
     @Override
-    public DecodedJWT decodeToken(String token) {
-        if (keyPair == null) {
-            generateRSAKeyPair();
-        }
+    public CompletableFuture<AuthResponse> login(LoginPayload payload) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (keyPair == null) {
+                generateRSAKeyPair();
+            }
+    
+            var matchingUsers = userRepo.findByUsername(payload.username());
+            if (matchingUsers.size() == 0)
+                throw new ApplicationException(404, "User not found.");
+    
+            var user = matchingUsers.get(0);
+            var passwordsMatch = passwordService.matchPasswords(
+                payload.password(), 
+                user.getPassword()
+            );
+    
+            if (passwordsMatch)
+                throw new ApplicationException(400, "Passwords do not match.");
+            
+            ProfileRole profileRole;
+            try {
+                profileRole = ProfileRole.getRole(payload.role());
+            } catch (IllegalArgumentException ex) {
+                throw new ApplicationException(400, "Invalid user role.");
+            }
+    
+            var publicKey = (RSAPublicKey) keyPair.getPublic();
+            var privateKey = (RSAPrivateKey) keyPair.getPrivate();
+    
+            String token;
+            try {
+                Algorithm algorithm = Algorithm.RSA512(publicKey, privateKey);
 
-        var publicKey = (RSAPublicKey) keyPair.getPublic();
-        var privateKey = (RSAPrivateKey) keyPair.getPrivate();
+                token = JWT.create()
+                    .withIssuer("Andrezinho")
+                    .withClaim("userId", user.getId().toString())
+                    .withClaim("role", profileRole.getRole())
+                    .withExpiresAt(Instant.now().plusSeconds(28800))
+                    .sign(algorithm);
+            } catch (JWTCreationException ex) {
+                throw new ApplicationException(500, "Claims couldn't be converted.");
+            }
+    
+            return new AuthResponse("Successful login.", token);
+        });
+    }
 
-        Algorithm algorithm = Algorithm.RSA512(publicKey, privateKey);
-        Verification verification = JWT.require(algorithm)
-            .withIssuer("Andrezinho");
-
-        try {
-            JWTVerifier verifier = verification.build();
-            return verifier.verify(token);
-        } catch (JWTVerificationException ex) {
-            throw new ApplicationException(403, "Invalid token.");
-        }
+    @Override
+    public CompletableFuture<DecodedJWT> decodeToken(String token) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (keyPair == null) {
+                generateRSAKeyPair();
+            }
+    
+            var publicKey = (RSAPublicKey) keyPair.getPublic();
+            var privateKey = (RSAPrivateKey) keyPair.getPrivate();
+    
+            Algorithm algorithm = Algorithm.RSA512(publicKey, privateKey);
+            Verification verification = JWT.require(algorithm)
+                .withIssuer("Andrezinho");
+    
+            try {
+                JWTVerifier verifier = verification.build();
+                return verifier.verify(token);
+            } catch (JWTVerificationException ex) {
+                throw new ApplicationException(403, "Invalid token.");
+            }
+        });
     }
 }
