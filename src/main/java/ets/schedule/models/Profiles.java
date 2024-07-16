@@ -26,8 +26,8 @@ public class Profiles extends BaseModel {
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "group_id", nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "group_id", nullable = true)
     private Groups group;
 
     @Column(name = "role", nullable = false)

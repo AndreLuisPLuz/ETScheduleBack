@@ -7,6 +7,8 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,7 +23,9 @@ import com.auth0.jwt.interfaces.Verification;
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.payloads.login.LoginConfirmPayload;
 import ets.schedule.data.payloads.login.LoginPayload;
-import ets.schedule.data.responses.AuthResponse;
+import ets.schedule.data.responses.login.AuthConfirmResponse;
+import ets.schedule.data.responses.login.AuthResponse;
+import ets.schedule.data.responses.profile.ProfileResponse;
 import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.AuthService;
 import ets.schedule.interfaces.services.PasswordService;
@@ -48,7 +52,7 @@ public class Auth0JwtService implements AuthService {
     }
 
     @Override
-    public CompletableFuture<Boolean> checkAsync(LoginConfirmPayload payload) {
+    public CompletableFuture<AuthConfirmResponse> checkAsync(LoginConfirmPayload payload) {
         return CompletableFuture.supplyAsync(() -> {
             var matchingUsers = userRepo.findByUsername(payload.username());
             if (matchingUsers.size() == 0)
@@ -63,7 +67,12 @@ public class Auth0JwtService implements AuthService {
             if (passwordsMatch)
                 throw new ApplicationException(400, "Passwords do not match.");
             
-            return true;
+            List<ProfileResponse> profileData = user.getProfiles()
+                .stream()
+                .map(p -> ProfileResponse.buildFromEntity(p))
+                .collect(Collectors.toList());
+            
+            return new AuthConfirmResponse(true, profileData);
         });
     }
 
