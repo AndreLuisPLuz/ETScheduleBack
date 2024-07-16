@@ -9,7 +9,7 @@ import ets.schedule.data.payloads.login.LoginPayload;
 import ets.schedule.data.responses.AuthResponse;
 
 public interface AuthService {
-    CompletableFuture<Boolean> check(LoginConfirmPayload payload);
-    CompletableFuture<AuthResponse> login(LoginPayload payload);
-    CompletableFuture<DecodedJWT> decodeToken(String token);
+    CompletableFuture<Boolean> checkAsync(LoginConfirmPayload payload);
+    CompletableFuture<AuthResponse> loginAsync(LoginPayload payload);
+    CompletableFuture<DecodedJWT> decodeTokenAsync(String token);
 }

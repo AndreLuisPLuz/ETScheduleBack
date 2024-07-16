@@ -4,6 +4,9 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
+
+import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.AuthService;
 import ets.schedule.sessions.UserSession;
@@ -35,7 +38,14 @@ public class AuthFilter implements Filter {
 
         var auth = req.getHeader("auth");
 
-        var decodedJWT = authService.decodeToken(auth);
+        DecodedJWT decodedJWT;
+        try {
+            decodedJWT = authService.decodeTokenAsync(auth).get();
+        } catch (Exception ex) {
+            throw new ApplicationException(500, "Server execution was interrupted.");
+        }
+
+
         var userId = decodedJWT.getClaim("userId").asString();
         var profileRole = ProfileRole.getRole(
             decodedJWT.getClaim("role").asString()

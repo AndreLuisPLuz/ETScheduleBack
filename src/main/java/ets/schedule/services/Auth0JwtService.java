@@ -48,7 +48,7 @@ public class Auth0JwtService implements AuthService {
     }
 
     @Override
-    public CompletableFuture<Boolean> check(LoginConfirmPayload payload) {
+    public CompletableFuture<Boolean> checkAsync(LoginConfirmPayload payload) {
         return CompletableFuture.supplyAsync(() -> {
             var matchingUsers = userRepo.findByUsername(payload.username());
             if (matchingUsers.size() == 0)
@@ -68,7 +68,7 @@ public class Auth0JwtService implements AuthService {
     }
 
     @Override
-    public CompletableFuture<AuthResponse> login(LoginPayload payload) {
+    public CompletableFuture<AuthResponse> loginAsync(LoginPayload payload) {
         return CompletableFuture.supplyAsync(() -> {
             if (keyPair == null) {
                 generateRSAKeyPair();
@@ -116,7 +116,7 @@ public class Auth0JwtService implements AuthService {
     }
 
     @Override
-    public CompletableFuture<DecodedJWT> decodeToken(String token) {
+    public CompletableFuture<DecodedJWT> decodeTokenAsync(String token) {
         return CompletableFuture.supplyAsync(() -> {
             if (keyPair == null) {
                 generateRSAKeyPair();
