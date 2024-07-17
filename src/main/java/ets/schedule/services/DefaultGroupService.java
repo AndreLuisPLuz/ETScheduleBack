@@ -1,11 +1,13 @@
 package ets.schedule.services;
 
+import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.groups.GroupPayload;
+import ets.schedule.data.responses.get.GroupGetResponse;
 import ets.schedule.interfaces.services.GroupsService;
 import ets.schedule.models.Groups;
-import ets.schedule.repositories.GroupsRepository;
+import ets.schedule.repositories.GroupsJPARepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 
@@ -17,47 +19,45 @@ import java.util.concurrent.CompletableFuture;
 public class DefaultGroupService implements GroupsService {
 
     @Autowired
-    private GroupsRepository groupsRepository;
+    private GroupsJPARepository groupsJPARepository;
 
     @Override
-    public CompletableFuture<HttpList<Groups>> getAllGroups() {
-        return CompletableFuture.supplyAsync(() -> {
-            return new HttpList<Groups>(
-                    HttpStatusCode.valueOf(200),
-                    groupsRepository.findAll()
-            );
-        });
+    public HttpList<GroupGetResponse> getAllGroups() {
+        var groups = groupsJPARepository.findAll().stream().map(
+                GroupGetResponse::buildFromEntity
+        );
+
+        return new HttpList<GroupGetResponse>(
+                HttpStatusCode.valueOf(200),
+                groups.toList()
+        );
     }
 
     @Override
-    public CompletableFuture<HttpEntity<Groups>> getGroupById(Long id) {
-        return CompletableFuture.supplyAsync(() -> {
+    public HttpEntity<GroupGetResponse> getGroupById(Long id) {
+        var group = groupsJPARepository.findById(id);
+        if(group.isEmpty()) {
+            throw new ApplicationException(404, "Group could not be found.");
+        }
 
-            var group = groupsRepository.findById(id);
-//        if(group.isEmpty()) {
-//            throw new NotFoundException("Group was not found.");
-//        }
-
-            return new HttpEntity<Groups>(
-                    HttpStatusCode.valueOf(200),
-                    group.get()
-            );
-        });
+        return new HttpEntity<GroupGetResponse>(
+                HttpStatusCode.valueOf(200),
+                GroupGetResponse.buildFromEntity(group.get())
+        );
     }
 
     @Override
-    public CompletableFuture<HttpEntity<Groups>> createGroup(GroupPayload group) {
-        return CompletableFuture.supplyAsync(() -> {
+    public HttpEntity<GroupGetResponse> createGroup(GroupPayload group) {
+        var newGroup = new Groups(group.name(),
+                formatDateFromString(group.beginsAt()),
+                formatDateFromString(group.endsAt()));
 
-            var newGroup = new Groups(group.name(),
-                    formatDateFromString(group.beginsAt()),
-                    formatDateFromString(group.endsAt()));
+        groupsJPARepository.save(newGroup);
 
-            return new HttpEntity<Groups>(
-                    HttpStatusCode.valueOf(200),
-                    groupsRepository.save(newGroup)
-            );
-        });
+        return new HttpEntity<GroupGetResponse>(
+                HttpStatusCode.valueOf(200),
+                GroupGetResponse.buildFromEntity(newGroup)
+        );
     }
 
     public Date formatDateFromString(String dateString) {

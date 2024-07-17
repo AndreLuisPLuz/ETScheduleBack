@@ -1,13 +1,15 @@
 package ets.schedule.services;
 
+import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.event.EventPayload;
+import ets.schedule.data.responses.get.EventGetResponse;
 import ets.schedule.interfaces.services.EventsService;
 import ets.schedule.models.Events;
-import ets.schedule.repositories.DisciplinesRepository;
-import ets.schedule.repositories.EventsRepository;
-import ets.schedule.repositories.GroupsRepository;
+import ets.schedule.repositories.DisciplinesJPARepository;
+import ets.schedule.repositories.EventsJPARepository;
+import ets.schedule.repositories.GroupsJPARepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
@@ -19,47 +21,50 @@ import java.util.concurrent.CompletableFuture;
 public class DefaultEventsService implements EventsService {
 
     @Autowired
-    private EventsRepository eventsRepository;
+    private EventsJPARepository eventsJPARepository;
 
     @Autowired
-    private GroupsRepository groupsRepository;
+    private GroupsJPARepository groupsJPARepository;
 
     @Autowired
-    private DisciplinesRepository disciplinesRepository;
+    private DisciplinesJPARepository disciplinesJPARepository;
 
     @Override
-    public CompletableFuture<HttpList<Events>> getAllEvents() {
-        return CompletableFuture.supplyAsync(() -> {
-            return new HttpList<>(
-                    HttpStatus.valueOf(200),
-                    eventsRepository.findAll()
-            );
-        });
+    public HttpList<EventGetResponse> getAllEvents() {
+        var events = eventsJPARepository.findAll().stream().map(
+                EventGetResponse::buildFromEntity
+        );
+
+        return new HttpList<>(
+                HttpStatus.valueOf(200),
+                events.toList()
+        );
     }
 
     @Override
-    public CompletableFuture<HttpEntity<Events>> createEvent(EventPayload obj) {
-        return CompletableFuture.supplyAsync(() -> {
+    public HttpEntity<EventGetResponse> createEvent(EventPayload obj) {
+        var newEvent = new Events(
+                formatDateFromString(obj.startsAt()),
+                formatDateFromString(obj.endsAt()),
+                obj.description());
 
-            var newEvent = new Events(
-                    formatDateFromString(obj.startsAt()),
-                    formatDateFromString(obj.endsAt()),
-                    obj.description());
+        var group = groupsJPARepository.findById(obj.groupId());
+        var discipline = disciplinesJPARepository.findById(obj.disciplineId());
+        if(group.isEmpty()) {
+            throw new ApplicationException(404, "Group could not be found.");
+        } else if(discipline.isEmpty()) {
+            throw new ApplicationException(404, "Discipline could not be found.");
+        }
 
-            var group = groupsRepository.findById(obj.groupId());
-            var discipline = disciplinesRepository.findById(obj.disciplineId());
-//            if(group.isEmpty() || discipline.isEmpty()) {
-//                throw new NotFoundException("A resource was not found.");
-//            }
+        newEvent.setGroup(group.get());
+        newEvent.setDiscipline(discipline.get());
 
-            newEvent.setGroup(group.get());
-            newEvent.setDiscipline(discipline.get());
+        eventsJPARepository.save(newEvent);
 
-            return new HttpEntity<>(
-                    HttpStatus.valueOf(201),
-                    eventsRepository.save(newEvent)
-            );
-        });
+        return new HttpEntity<>(
+                HttpStatus.valueOf(201),
+                EventGetResponse.buildFromEntity(newEvent)
+        );
     }
 
     public Date formatDateFromString(String dateString) {

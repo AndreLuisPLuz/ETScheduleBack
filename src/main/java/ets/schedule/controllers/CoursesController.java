@@ -2,6 +2,7 @@ package ets.schedule.controllers;
 
 import java.util.List;
 
+import ets.schedule.data.responses.get.CourseGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,32 +19,20 @@ public class CoursesController {
     private CoursesService courseService;
     
     @GetMapping("/api/v1/course")
-    public ResponseEntity<List<Courses>> getAllCourses() {
-        try {
-            var response = courseService.getAll().get();
-            return ResponseEntity.status(response.statusCode()).body(response.data());
-        } catch(Exception ex) {
-            throw new ApplicationException(500, "Request could not be completed.");
-        }
+    public ResponseEntity<List<CourseGetResponse>> getAllCourses() {
+        var response = courseService.getAll();
+        return ResponseEntity.status(response.statusCode()).body(response.data());
     }
 
     @PostMapping("/api/v1/course")
-    public ResponseEntity<Courses> createCourse(@RequestBody CoursePayload payload) {
-        try {
-            var response = courseService.createCourse(payload).get();
-            return ResponseEntity.status(response.statusCode()).body(response.data());
-        } catch(Exception ex) {
-            throw new ApplicationException(500, "Request could not be completed.");
-        }
+    public ResponseEntity<CourseGetResponse> createCourse(@RequestBody CoursePayload payload) {
+        var response = courseService.createCourse(payload);
+        return ResponseEntity.status(response.statusCode()).body(response.data());
     }
 
     @PutMapping("/api/v1/course")
-    public ResponseEntity<Courses> editCourse(@RequestParam Long id, @RequestBody CoursePayload payload) {
-        try {
-            var response = courseService.editCourse(id, payload).get();
-            return ResponseEntity.status(response.statusCode()).body(response.data());
-        } catch(Exception ex) {
-            throw new ApplicationException(500, "Request could not be completed.");
-        }
+    public ResponseEntity<CourseGetResponse> editCourse(@RequestParam Long id, @RequestBody CoursePayload payload) {
+        var response = courseService.editCourse(id, payload);
+        return ResponseEntity.status(response.statusCode()).body(response.data());
     }
 }

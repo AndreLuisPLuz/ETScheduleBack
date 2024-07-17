@@ -2,6 +2,7 @@ package ets.schedule.controllers;
 
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.payloads.event.EventPayload;
+import ets.schedule.data.responses.get.EventGetResponse;
 import ets.schedule.interfaces.services.EventsService;
 import ets.schedule.models.Events;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,22 +20,14 @@ public class EventsController {
     private EventsService eventsService;
 
     @GetMapping("/api/v1/event")
-    private ResponseEntity<List<Events>> getAllEvents() {
-        try {
-            var response = eventsService.getAllEvents().get();
-            return ResponseEntity.status(response.statusCode()).body(response.data());
-        } catch (Exception e) {
-            throw new ApplicationException(500, "Request could not be completed");
-        }
+    private ResponseEntity<List<EventGetResponse>> getAllEvents() {
+        var response = eventsService.getAllEvents();
+        return ResponseEntity.status(response.statusCode()).body(response.data());
     }
 
     @PostMapping("/api/v1/event")
-    private ResponseEntity<Events> createEvent(EventPayload obj) {
-        try {
-            var response = eventsService.createEvent(obj).get();
-            return ResponseEntity.status(response.statusCode()).body(response.data());
-        } catch (Exception e) {
-            throw new ApplicationException(500, "Request could not be completed");
-        }
+    private ResponseEntity<EventGetResponse> createEvent(EventPayload obj) {
+        var response = eventsService.createEvent(obj);
+        return ResponseEntity.status(response.statusCode()).body(response.data());
     }
 }

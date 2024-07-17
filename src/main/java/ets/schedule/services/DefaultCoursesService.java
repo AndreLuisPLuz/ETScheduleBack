@@ -2,6 +2,8 @@ package ets.schedule.services;
 
 import java.util.concurrent.CompletableFuture;
 
+import ets.schedule.Exceptions.ApplicationException;
+import ets.schedule.data.responses.get.CourseGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 
@@ -10,60 +12,57 @@ import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.courses.CoursePayload;
 import ets.schedule.interfaces.services.CoursesService;
 import ets.schedule.models.Courses;
-import ets.schedule.repositories.CoursesRepository;
+import ets.schedule.repositories.CoursesJPARepository;
 
 public class DefaultCoursesService implements CoursesService {
 
     @Autowired
-    public CoursesRepository repo;
+    public CoursesJPARepository repo;
 
     @Override
-    public CompletableFuture<HttpList<Courses>> getAll() {
-        return CompletableFuture.supplyAsync(() -> {
+    public HttpList<CourseGetResponse> getAll() {
+        var courses = repo.findAll().stream().map(
+                CourseGetResponse::buildFromEntity
+        );
 
-            return new HttpList<Courses>(
-                HttpStatusCode.valueOf(200),
-                repo.findAll()
-            );
-        });
+        return new HttpList<CourseGetResponse>(
+            HttpStatusCode.valueOf(200),
+            courses.toList()
+        );
     }
 
     @Override
-    public CompletableFuture<HttpEntity<Courses>> createCourse(CoursePayload payload) {
-        return CompletableFuture.supplyAsync(() -> {
+    public HttpEntity<CourseGetResponse> createCourse(CoursePayload payload) {
+        Courses newCourse = new Courses(payload.name(), payload.description());
+        repo.save(newCourse);
 
-            Courses newCourse = new Courses(payload.name(), payload.description());
-            Courses savedCourse = repo.save(newCourse);
-
-            return new HttpEntity<>(
-                HttpStatusCode.valueOf(201),
-                savedCourse
-            );
-        });
+        return new HttpEntity<>(
+            HttpStatusCode.valueOf(201),
+            CourseGetResponse.buildFromEntity(newCourse)
+        );
     }
 
     @Override
-    public CompletableFuture<HttpEntity<Courses>> editCourse(Long id, CoursePayload payload) {
-        return CompletableFuture.supplyAsync(() -> {
+    public HttpEntity<CourseGetResponse> editCourse(Long id, CoursePayload payload) {
+        var opCourse = repo.findById(id);
+        if(opCourse.isEmpty()) {
+            throw new ApplicationException(404, "Course could not be found.");
+        }
 
-            var course = repo.findById(id);
-//            if(course.isEmpty()) {
-//                throw new NotFoundException("Course was not found.");
-//            }
+        if (payload.name() != null && !payload.name().isEmpty()) {
+            opCourse.get().setName(payload.name());
+        }
 
-            if (payload.name() != null && !payload.name().isEmpty()) {
-                course.get().setName(payload.name());
-            }
+        if (payload.description() != null && !payload.description().isEmpty()) {
+            opCourse.get().setDescription(payload.description());
+        }
 
-            if (payload.description() != null && !payload.description().isEmpty()) {
-                course.get().setDescription(payload.description());
-            }
+        var course = repo.save(opCourse.get());
 
-            return new HttpEntity<>(
-                HttpStatusCode.valueOf(201),
-                    repo.save(course.get())
-            );
-        });
+        return new HttpEntity<>(
+            HttpStatusCode.valueOf(201),
+                CourseGetResponse.buildFromEntity(course)
+        );
     }
     
 }

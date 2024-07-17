@@ -1,5 +1,6 @@
 package ets.schedule.filters;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,6 +12,7 @@ import ets.schedule.data.responses.ErrorResponse;
 
 @ControllerAdvice
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
+
     @ExceptionHandler(value = { ApplicationException.class })
     protected ResponseEntity<ErrorResponse> handleConflict(
             ApplicationException ex,
