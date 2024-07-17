@@ -1,14 +1,12 @@
 package ets.schedule.models;
 
 import ets.schedule.enums.ProfileRole;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,4 +35,13 @@ public class Profiles extends BaseModel {
 
     @Column(name = "consensus", nullable = true)
     private String consensus;
+
+    @OneToMany(mappedBy = "instructor")
+    public List<Disciplines> disciplines;
+
+    @OneToMany(mappedBy = "instructor")
+    public List<InstructorSkills> instructorSkills;
+
+    @OneToMany(mappedBy = "instructor")
+    public List<StudentAvaliation> studentAvaliations;
 }

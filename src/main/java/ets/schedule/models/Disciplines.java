@@ -1,13 +1,11 @@
 package ets.schedule.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,7 +24,7 @@ public class Disciplines extends BaseModel {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "instructor_id", nullable = false)
-    private Users instructor;
+    private Profiles instructor;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "course_id", nullable = false)
@@ -34,4 +32,13 @@ public class Disciplines extends BaseModel {
 
     @Column(name = "semester", nullable = false)
     private Integer semester;
+
+    @OneToMany(mappedBy = "discipline")
+    private List<Competences> competences;
+
+    @OneToMany(mappedBy = "discipline")
+    private List<Events> events;
+
+    @OneToMany(mappedBy = "disciplines")
+    private List<StudentAvaliation> studentAvaliations;
 }

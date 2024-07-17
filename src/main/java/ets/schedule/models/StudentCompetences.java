@@ -26,7 +26,7 @@ public class StudentCompetences extends BaseModel {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "student_id", nullable = false)
-    private Users student;
+    private Profiles student;
 
     @Column(name = "degree", nullable = false)
     private String degree;
