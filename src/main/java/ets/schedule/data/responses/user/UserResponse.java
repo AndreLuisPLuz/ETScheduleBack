@@ -1,4 +1,4 @@
-package ets.schedule.data.responses;
+package ets.schedule.data.responses.user;
 
 import java.util.Date;
 import java.util.List;

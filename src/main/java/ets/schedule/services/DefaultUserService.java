@@ -1,6 +1,7 @@
 package ets.schedule.services;
 
 import java.util.stream.Collectors;
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,10 @@ import org.springframework.http.HttpStatusCode;
 
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.HttpEntity;
-import ets.schedule.data.payloads.UserCreatePayload;
-import ets.schedule.data.responses.UserResponse;
+import ets.schedule.data.payloads.user.UserCreatePayload;
+import ets.schedule.data.payloads.user.UserUpdatePayload;
+import ets.schedule.data.responses.user.UserResponse;
+import ets.schedule.data.responses.user.UserUpdateResponse;
 import ets.schedule.interfaces.services.PasswordService;
 import ets.schedule.interfaces.services.UserService;
 import ets.schedule.models.Users;
@@ -52,6 +55,49 @@ public class DefaultUserService implements UserService {
         return new HttpEntity<UserResponse>(
                 HttpStatusCode.valueOf(201),
                 UserResponse.buildFromEntity(createdUser));
+    }
+
+    @Override
+    public HttpEntity<UserUpdateResponse> updateUser(
+            Long id,
+            UserUpdatePayload payload
+    ) {
+        boolean fullNameMissing = payload.fullName().isEmpty();
+        boolean birthDateMissing = payload.birthDate().isEmpty();
+
+        if (fullNameMissing)
+            throw new ApplicationException(400, "User's full name must be given.");
+
+        if (birthDateMissing)
+            throw new ApplicationException(400, "User's birth date must be given.");
+        
+        var fetchUser = repo.findById(id);
+        if (!fetchUser.isPresent())
+            throw new ApplicationException(404, "User not found.");
+
+        var user = fetchUser.get();
+
+        var passwordVerification = passwordService.verifyPrerequisites(
+                payload.password());
+
+        if (!passwordVerification.isValid())
+            return new HttpEntity<UserUpdateResponse>(
+                    HttpStatusCode.valueOf(400),
+                    new UserUpdateResponse.Error(passwordVerification));
+        
+        user.setFullName(payload.fullName());
+        user.setBirthDate(Date.valueOf(payload.birthDate()));
+        user.setPassword(passwordService.applyCriptography(
+                payload.password() != null
+                    ? payload.password()
+                    : "Ets@Bosch2024"
+        ));
+
+        var savedUser = repo.save(user);
+
+        return new HttpEntity<UserUpdateResponse>(
+                HttpStatusCode.valueOf(200),
+                UserUpdateResponse.Ok.buildFromEntity(savedUser));
     }
 
 }

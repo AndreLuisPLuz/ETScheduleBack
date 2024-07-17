@@ -74,22 +74,30 @@ public class PBKDF2PasswordService implements PasswordService {
 
     @Override
     public PasswordVerification verifyPrerequisites(String rawPassword) {
-        int parametersMet = 0;
-
-        if (rawPassword.length() >= 8) parametersMet++;
+        boolean length =  (rawPassword.length() >= 8);
         
-        if (containsLowerCase(rawPassword)) parametersMet++;
+        boolean lowerCase = (containsLowerCase(rawPassword));
 
-        if (containsUpperCase(rawPassword)) parametersMet++;
+        boolean upperCase = (containsUpperCase(rawPassword));
 
-        if (containsNumber(rawPassword)) parametersMet++;
+        boolean specialChar = (containsSpecialCharacter(rawPassword));
 
-        boolean isValid = (parametersMet == 4);
+        boolean number = (containsNumber(rawPassword));
+
+        var isValid = (
+            length &&
+            lowerCase &&
+            upperCase &&
+            specialChar &&
+            number);
 
         return new PasswordVerification(
             isValid,
-            parametersMet
-        );
+            length,
+            upperCase,
+            lowerCase,
+            number,
+            specialChar);
     }
 
     private boolean contains(String value, IntPredicate predicate) {
@@ -107,6 +115,13 @@ public class PBKDF2PasswordService implements PasswordService {
         return contains(
             value,
             i -> Character.isLetter(i) && Character.isUpperCase(i)
+        );
+    }
+
+    private boolean containsSpecialCharacter(String value) {
+        return contains(
+            value,
+            i -> !Character.isLetterOrDigit(i) && !Character.isWhitespace(i)
         );
     }
 

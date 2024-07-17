@@ -2,5 +2,9 @@ package ets.schedule.data.system;
 
 public record PasswordVerification(
     boolean isValid,
-    int parametersMet
+    boolean hasRequiredLength,
+    boolean hasUpperCase,
+    boolean hasLowerCase,
+    boolean hasNumber,
+    boolean hasSpecialChar
 ) { }
