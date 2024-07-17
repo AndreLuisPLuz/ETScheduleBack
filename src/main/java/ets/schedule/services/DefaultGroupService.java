@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatusCode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.CompletableFuture;
 
 public class DefaultGroupService implements GroupsService {
 

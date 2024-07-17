@@ -1,8 +1,6 @@
 package ets.schedule.data.responses.get;
 
-import ets.schedule.models.Disciplines;
 import ets.schedule.models.Events;
-import ets.schedule.models.Groups;
 
 import java.util.Date;
 

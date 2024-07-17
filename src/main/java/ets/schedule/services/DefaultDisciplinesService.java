@@ -13,11 +13,14 @@ import ets.schedule.repositories.*;
 import ets.schedule.sessions.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
+<<<<<<< HEAD
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+=======
+>>>>>>> 85324aff2e3ebade9e303e3c1d809a77f8dbe0f3
 
 public class DefaultDisciplinesService implements DisciplinesService {
 

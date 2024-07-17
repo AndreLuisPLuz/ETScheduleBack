@@ -2,15 +2,12 @@ package ets.schedule.controllers;
 
 import java.util.List;
 
-import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.payloads.disciplines.DisciplinePayload;
 import ets.schedule.data.responses.get.DisciplineGetResponse;
 import ets.schedule.interfaces.services.DisciplinesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import ets.schedule.models.Disciplines;
 
 @RestController
 public class DisciplinesController {

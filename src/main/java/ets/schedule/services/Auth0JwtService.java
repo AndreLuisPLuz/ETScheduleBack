@@ -30,11 +30,15 @@ import ets.schedule.data.responses.profile.ProfileResponse;
 import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.AuthService;
 import ets.schedule.interfaces.services.PasswordService;
+import ets.schedule.repositories.ProfileJPARepository;
 import ets.schedule.repositories.UserJPARepository;
 
 public class Auth0JwtService implements AuthService {
     @Autowired
     UserJPARepository userRepo;
+
+    @Autowired
+    ProfileJPARepository profileRepo;
 
     @Autowired
     PasswordService passwordService;
@@ -93,7 +97,8 @@ public class Auth0JwtService implements AuthService {
         var passwordsMatch = passwordService.matchPasswords(
                 payload.password(),
                 user.getPassword());
-
+        
+                
         if (passwordsMatch)
             throw new ApplicationException(400, "Passwords do not match.");
 
@@ -103,6 +108,14 @@ public class Auth0JwtService implements AuthService {
         } catch (IllegalArgumentException ex) {
             throw new ApplicationException(400, "Invalid user role.");
         }
+
+        var profiles = profileRepo.findByUser(user)
+                .stream()
+                .filter(p -> p.getRole().equals(profileRole))
+                .collect(Collectors.toList());
+        
+        if (profiles.size() == 0)
+            throw new ApplicationException(400, "Role not atributed to user.");
 
         var publicKey = (RSAPublicKey) keyPair.getPublic();
         var privateKey = (RSAPrivateKey) keyPair.getPrivate();
@@ -114,6 +127,7 @@ public class Auth0JwtService implements AuthService {
             token = JWT.create()
                     .withIssuer("Andrezinho")
                     .withClaim("userId", user.getId().toString())
+                    .withClaim("profileId", profiles.get(0).getId())
                     .withClaim("role", profileRole.getRole())
                     .withExpiresAt(Instant.now().plusSeconds(28800))
                     .sign(algorithm);
