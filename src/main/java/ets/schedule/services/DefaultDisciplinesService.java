@@ -1,9 +1,8 @@
 package ets.schedule.services;
 
-import ets.schedule.Exceptions.NotFoundException;
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
-import ets.schedule.data.payloads.DisciplinePayload;
+import ets.schedule.data.payloads.disciplines.DisciplinePayload;
 import ets.schedule.interfaces.services.DisciplinesService;
 import ets.schedule.models.Disciplines;
 import ets.schedule.repositories.CoursesRepository;

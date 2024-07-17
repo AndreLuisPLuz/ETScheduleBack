@@ -1,6 +1,4 @@
-package ets.schedule.data.payloads;
-
-import java.util.Date;
+package ets.schedule.data.payloads.groups;
 
 public record GroupPayload(String name, String beginsAt, String endsAt) {
 }

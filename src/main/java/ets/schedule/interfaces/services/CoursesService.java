@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
-import ets.schedule.data.payloads.CoursePayload;
+import ets.schedule.data.payloads.courses.CoursePayload;
 import ets.schedule.models.Courses;
 
 public interface CoursesService {

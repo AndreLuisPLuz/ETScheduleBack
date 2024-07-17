@@ -1,14 +1,12 @@
 package ets.schedule.controllers;
 
 import ets.schedule.Exceptions.ApplicationException;
-import ets.schedule.data.payloads.EventPayload;
+import ets.schedule.data.payloads.event.EventPayload;
 import ets.schedule.interfaces.services.EventsService;
 import ets.schedule.models.Events;
-import jdk.jfr.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 

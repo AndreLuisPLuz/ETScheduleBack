@@ -2,7 +2,7 @@ package ets.schedule.services;
 
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
-import ets.schedule.data.payloads.GroupPayload;
+import ets.schedule.data.payloads.groups.GroupPayload;
 import ets.schedule.interfaces.services.GroupsService;
 import ets.schedule.models.Groups;
 import ets.schedule.repositories.GroupsRepository;

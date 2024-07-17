@@ -1,4 +1,4 @@
-package ets.schedule.data.responses;
+package ets.schedule.data.responses.login;
 
 public record AuthResponse(
     String message,

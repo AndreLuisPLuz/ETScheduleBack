@@ -1,9 +1,8 @@
 package ets.schedule.services;
 
-import ets.schedule.Exceptions.NotFoundException;
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
-import ets.schedule.data.payloads.EventPayload;
+import ets.schedule.data.payloads.event.EventPayload;
 import ets.schedule.interfaces.services.EventsService;
 import ets.schedule.models.Events;
 import ets.schedule.repositories.DisciplinesRepository;

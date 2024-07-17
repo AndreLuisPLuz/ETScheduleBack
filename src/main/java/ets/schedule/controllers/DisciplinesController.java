@@ -3,7 +3,7 @@ package ets.schedule.controllers;
 import java.util.List;
 
 import ets.schedule.Exceptions.ApplicationException;
-import ets.schedule.data.payloads.DisciplinePayload;
+import ets.schedule.data.payloads.disciplines.DisciplinePayload;
 import ets.schedule.interfaces.services.DisciplinesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

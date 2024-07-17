@@ -2,13 +2,12 @@ package ets.schedule.services;
 
 import java.util.concurrent.CompletableFuture;
 
-import ets.schedule.Exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
-import ets.schedule.data.payloads.CoursePayload;
+import ets.schedule.data.payloads.courses.CoursePayload;
 import ets.schedule.interfaces.services.CoursesService;
 import ets.schedule.models.Courses;
 import ets.schedule.repositories.CoursesRepository;
