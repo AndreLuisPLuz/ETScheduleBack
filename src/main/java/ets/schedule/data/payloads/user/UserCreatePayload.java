@@ -1,4 +1,4 @@
-package ets.schedule.data.payloads;
+package ets.schedule.data.payloads.user;
 
 import java.util.List;
 

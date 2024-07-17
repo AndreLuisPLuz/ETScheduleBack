@@ -129,10 +129,12 @@ public class Auth0JwtService implements AuthService {
     }
 
     @Override
-    public DecodedJWT decodeTokenAsync(String token) {
+    public DecodedJWT decodeTokenAsync(String auth) {
         if (keyPair == null) {
             generateRSAKeyPair();
         }
+
+        var token = auth.split(" ")[1];
 
         var publicKey = (RSAPublicKey) keyPair.getPublic();
         var privateKey = (RSAPrivateKey) keyPair.getPrivate();
