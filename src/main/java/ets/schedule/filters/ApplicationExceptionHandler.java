@@ -7,14 +7,15 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import ets.schedule.Exceptions.ApplicationException;
+import ets.schedule.data.responses.ErrorResponse;
 
 @ControllerAdvice
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { ApplicationException.class })
-    protected ResponseEntity<Object> handleConflict(
+    protected ResponseEntity<ErrorResponse> handleConflict(
             ApplicationException ex,
             WebRequest request
     ) {
-        return ResponseEntity.status(ex.getStatusCode()).body(ex.getMessage());
+        return ResponseEntity.status(ex.getStatusCode()).body(ex.getErrorResponse());
     }
 }

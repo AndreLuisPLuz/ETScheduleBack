@@ -17,9 +17,11 @@ import lombok.Setter;
 @Table(name = "profiles")
 public class Profiles extends BaseModel {
 
-    public Profiles(String role, String consensus) {
+    public Profiles(String role, Users user)
+        throws
+            IllegalArgumentException {
         this.role = ProfileRole.getRole(role);
-        this.consensus = consensus;
+        this.user = user;
     }
 
     @ManyToOne(optional = false)

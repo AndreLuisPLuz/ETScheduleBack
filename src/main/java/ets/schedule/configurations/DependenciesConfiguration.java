@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.context.annotation.RequestScope;
 
+import ets.schedule.filters.AuthFilter;
 import ets.schedule.interfaces.services.AuthService;
 import ets.schedule.interfaces.services.PasswordService;
 import ets.schedule.interfaces.services.UserService;
@@ -25,6 +26,12 @@ public class DependenciesConfiguration {
     @Scope("singleton")
     AuthService authService() {
         return new Auth0JwtService();
+    }
+
+    @Bean
+    @Scope("singleton")
+    AuthFilter authFilter() {
+        return new AuthFilter();
     }
 
     @Bean
