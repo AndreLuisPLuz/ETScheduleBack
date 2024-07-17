@@ -41,11 +41,13 @@ public class AuthFilter implements Filter {
         decodedJWT = authService.decodeTokenAsync(auth);
 
         var userId = decodedJWT.getClaim("userId").asString();
+        var profileId = decodedJWT.getClaim("profileId").asString();
         var profileRole = ProfileRole.getRole(
             decodedJWT.getClaim("role").asString()
         );
 
         userSession.setUserId(Long.valueOf(userId));
+        userSession.setProfileId(Long.valueOf(profileId));
         userSession.setProfileRole(profileRole);
 
         chain.doFilter(req, res);
