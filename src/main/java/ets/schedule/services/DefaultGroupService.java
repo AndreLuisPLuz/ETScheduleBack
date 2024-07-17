@@ -1,23 +1,20 @@
 package ets.schedule.services;
 
-import ets.schedule.Exceptions.NotFoundException;
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.GroupPayload;
-import ets.schedule.interfaces.services.GroupService;
+import ets.schedule.interfaces.services.GroupsService;
 import ets.schedule.models.Groups;
 import ets.schedule.repositories.GroupsRepository;
-import org.apache.catalina.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class DefaultGroupService implements GroupService {
+public class DefaultGroupService implements GroupsService {
 
     @Autowired
     private GroupsRepository groupsRepository;
@@ -52,19 +49,9 @@ public class DefaultGroupService implements GroupService {
     public CompletableFuture<HttpEntity<Groups>> createGroup(GroupPayload group) {
         return CompletableFuture.supplyAsync(() -> {
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'");
-            dateFormat.setLenient(false);
-            Date beginsAt = null;
-            Date endsAt = null;
-
-            try {
-                beginsAt = dateFormat.parse(group.beginsAt());
-                endsAt = dateFormat.parse(group.endsAt());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            var newGroup = new Groups(group.name(), beginsAt, endsAt);
+            var newGroup = new Groups(group.name(),
+                    formatDateFromString(group.beginsAt()),
+                    formatDateFromString(group.endsAt()));
 
             return new HttpEntity<Groups>(
                     HttpStatusCode.valueOf(200),
@@ -73,4 +60,15 @@ public class DefaultGroupService implements GroupService {
         });
     }
 
+    public Date formatDateFromString(String dateString) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'");
+        dateFormat.setLenient(false);
+
+        try {
+            return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

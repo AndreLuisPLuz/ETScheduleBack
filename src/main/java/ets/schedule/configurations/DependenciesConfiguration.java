@@ -1,13 +1,7 @@
 package ets.schedule.configurations;
 
-import ets.schedule.interfaces.services.CoursesService;
-import ets.schedule.interfaces.services.DisciplinesService;
-import ets.schedule.interfaces.services.GroupService;
-import ets.schedule.interfaces.services.UserService;
-import ets.schedule.services.DefaultCoursesService;
-import ets.schedule.services.DefaultDisciplinesService;
-import ets.schedule.services.DefaultGroupService;
-import ets.schedule.services.DefaultUserService;
+import ets.schedule.interfaces.services.*;
+import ets.schedule.services.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -17,7 +11,13 @@ public class DependenciesConfiguration {
 
     @Bean
     @Scope("singleton")
-    public GroupService groupService() {
+    public EventsService eventsService() {
+        return new DefaultEventsService();
+    }
+
+    @Bean
+    @Scope("singleton")
+    public GroupsService groupService() {
         return new DefaultGroupService();
     }
 
