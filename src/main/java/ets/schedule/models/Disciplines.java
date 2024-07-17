@@ -39,6 +39,6 @@ public class Disciplines extends BaseModel {
     @OneToMany(mappedBy = "discipline")
     private List<Events> events;
 
-    @OneToMany(mappedBy = "disciplines")
+    @OneToMany(mappedBy = "discipline")
     private List<StudentAvaliation> studentAvaliations;
 }

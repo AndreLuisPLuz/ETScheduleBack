@@ -13,14 +13,7 @@ import ets.schedule.repositories.*;
 import ets.schedule.sessions.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
-<<<<<<< HEAD
-
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-=======
->>>>>>> 85324aff2e3ebade9e303e3c1d809a77f8dbe0f3
 
 public class DefaultDisciplinesService implements DisciplinesService {
 
@@ -43,6 +36,13 @@ public class DefaultDisciplinesService implements DisciplinesService {
     public HttpList<DisciplineGetResponse> getAllDisciplines() {
         List<DisciplineGetResponse> disciplines = null;
 
+        var opProfile = profilesJPARepository.findById(userSession.getProfileId());
+        if(opProfile.isEmpty()) {
+            throw new ApplicationException(403, "User profile could not be found.");
+        }
+
+        var profile = opProfile.get();
+
         if(userSession.getProfileRole() == ProfileRole.Admin) {
             disciplines = disciplinesJPARepository.findAll().stream().map(
                     DisciplineGetResponse::buildFromEntity
@@ -50,8 +50,14 @@ public class DefaultDisciplinesService implements DisciplinesService {
         }
 
         if(userSession.getProfileRole() == ProfileRole.Instructor) {
-            disciplines = disciplinesJPARepository.findDisciplinesByInstructor_Id(
-                    userSession.getUserId())
+            disciplines = profile.getDisciplines()
+                    .stream()
+                    .map(DisciplineGetResponse::buildFromEntity)
+                    .toList();
+        }
+
+        if(userSession.getProfileRole() == ProfileRole.Student) {
+            disciplines = profile.getDisciplines()
                     .stream()
                     .map(DisciplineGetResponse::buildFromEntity)
                     .toList();
@@ -65,18 +71,18 @@ public class DefaultDisciplinesService implements DisciplinesService {
 
     @Override
     public HttpEntity<DisciplineGetResponse> getDisciplineById(Long id) {
-        Optional<Disciplines> discipline = null;
-
-        if(userSession.getProfileRole() == ProfileRole.Admin) {
-            discipline = disciplinesJPARepository.findById(id);
+        var profile = profilesJPARepository.findById(userSession.getProfileId());
+        if(profile.isEmpty()) {
+            throw new ApplicationException(403, "User profile could not be found.");
         }
 
-//        if(userSession.getProfileRole() == ProfileRole.Instructor) {
-//            var
-//        }
-
+        var discipline = disciplinesJPARepository.findById(id);
         if (discipline.isEmpty()) {
             throw new ApplicationException(404, "Discipline could not be found.");
+        }
+
+        if(!profile.get().getDisciplines().contains(discipline)){
+            throw new ApplicationException(403, "User does not have permission to access this discipline.");
         }
 
         return new HttpEntity<DisciplineGetResponse>(
@@ -87,6 +93,11 @@ public class DefaultDisciplinesService implements DisciplinesService {
 
     @Override
     public HttpEntity<DisciplineGetResponse> createDiscipline(DisciplinePayload obj) {
+
+        if(userSession.getProfileRole() == ProfileRole.Student) {
+            throw new ApplicationException(403, "Students are now allowed to create disciplines.");
+        }
+
         var course = coursesJPARepository.findById(obj.courseId());
         var group = groupsJPARepository.findById(obj.groupId());
         var instructor = profilesJPARepository.findById(obj.instructorId());
