@@ -7,7 +7,7 @@ import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.CoursePayload;
 import ets.schedule.models.Courses;
 
-public interface CourseService {
+public interface CoursesService {
     public CompletableFuture<HttpList<Courses>> getAll(); 
     public CompletableFuture<HttpEntity<Courses>> createCourse(CoursePayload payload); 
     public CompletableFuture<HttpEntity<Courses>> editCourse(Long id, CoursePayload payload); 

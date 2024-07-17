@@ -3,6 +3,7 @@ package ets.schedule.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,13 +11,13 @@ import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.models.Courses;
 import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.CoursePayload;
-import ets.schedule.interfaces.services.CourseService;
+import ets.schedule.interfaces.services.CoursesService;
 
 @RestController
-public class CourseController {
+public class CoursesController {
 
     @Autowired
-    private CourseService courseService;
+    private CoursesService courseService;
     
     @GetMapping("/api/v1/course")
     public ResponseEntity<List<Courses>> getAllCourses() {

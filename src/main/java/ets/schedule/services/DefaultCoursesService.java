@@ -1,24 +1,22 @@
 package ets.schedule.services;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import ets.schedule.Exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.CoursePayload;
-import ets.schedule.data.responses.UserResponse;
-import ets.schedule.interfaces.services.CourseService;
+import ets.schedule.interfaces.services.CoursesService;
 import ets.schedule.models.Courses;
-import ets.schedule.models.Users;
-import ets.schedule.repositories.CourseRepository;
+import ets.schedule.repositories.CoursesRepository;
 
-public class DefaultCourseService implements CourseService {
+public class DefaultCoursesService implements CoursesService {
 
     @Autowired
-    public CourseRepository repo;
+    public CoursesRepository repo;
 
     @Override
     public CompletableFuture<HttpList<Courses>> getAll() {
@@ -49,21 +47,22 @@ public class DefaultCourseService implements CourseService {
     public CompletableFuture<HttpEntity<Courses>> editCourse(Long id, CoursePayload payload) {
         return CompletableFuture.supplyAsync(() -> {
 
-            var course = (Courses) repo.findById(id).get();
+            var course = repo.findById(id);
+//            if(course.isEmpty()) {
+//                throw new NotFoundException("Course was not found.");
+//            }
 
             if (payload.name() != null && !payload.name().isEmpty()) {
-                course.setName(payload.name());
+                course.get().setName(payload.name());
             }
 
             if (payload.description() != null && !payload.description().isEmpty()) {
-                course.setDescription(payload.description());
+                course.get().setDescription(payload.description());
             }
 
-            repo.save(course);
-
             return new HttpEntity<>(
-                HttpStatusCode.valueOf(200),
-                course
+                HttpStatusCode.valueOf(201),
+                    repo.save(course.get())
             );
         });
     }

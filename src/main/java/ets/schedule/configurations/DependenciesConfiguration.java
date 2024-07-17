@@ -1,8 +1,10 @@
 package ets.schedule.configurations;
 
-import ets.schedule.interfaces.services.CourseService;
+import ets.schedule.interfaces.services.CoursesService;
+import ets.schedule.interfaces.services.DisciplinesService;
 import ets.schedule.interfaces.services.UserService;
-import ets.schedule.services.DefaultCourseService;
+import ets.schedule.services.DefaultCoursesService;
+import ets.schedule.services.DefaultDisciplinesService;
 import ets.schedule.services.DefaultUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +15,14 @@ public class DependenciesConfiguration {
 
     @Bean
     @Scope("singleton")
-    public CourseService courseService() {
-        return new DefaultCourseService();
+    public CoursesService courseService() {
+        return new DefaultCoursesService();
+    }
+
+    @Bean
+    @Scope("singleton")
+    public DisciplinesService disciplinesService() {
+        return new DefaultDisciplinesService();
     }
 
     @Bean
