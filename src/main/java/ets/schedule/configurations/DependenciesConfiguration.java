@@ -1,18 +1,13 @@
 package ets.schedule.configurations;
 
+import ets.schedule.filters.AuthFilter;
+import ets.schedule.interfaces.services.*;
+import ets.schedule.services.*;
+import ets.schedule.sessions.UserSession;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.context.annotation.RequestScope;
-
-import ets.schedule.filters.AuthFilter;
-import ets.schedule.interfaces.services.AuthService;
-import ets.schedule.interfaces.services.PasswordService;
-import ets.schedule.interfaces.services.UserService;
-import ets.schedule.services.Auth0JwtService;
-import ets.schedule.services.DefaultUserService;
-import ets.schedule.services.PBKDF2PasswordService;
-import ets.schedule.sessions.UserSession;
 
 @Configuration
 public class DependenciesConfiguration {
@@ -44,5 +39,29 @@ public class DependenciesConfiguration {
     @Scope("singleton")
     UserService userService() {
         return new DefaultUserService();
+    }
+
+    @Bean
+    @Scope("singleton")
+    public EventsService eventsService() {
+        return new DefaultEventsService();
+    }
+
+    @Bean
+    @Scope("singleton")
+    public GroupsService groupsService() {
+        return new DefaultGroupService();
+    }
+
+    @Bean
+    @Scope("singleton")
+    public CoursesService coursesService() {
+        return new DefaultCoursesService();
+    }
+
+    @Bean
+    @Scope("singleton")
+    public DisciplinesService disciplinesService() {
+        return new DefaultDisciplinesService();
     }
 }

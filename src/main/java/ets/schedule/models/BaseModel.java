@@ -2,17 +2,13 @@ package ets.schedule.models;
 
 import java.util.Date;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 @MappedSuperclass
 public abstract class BaseModel {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
     @Column(name = "created_at")
@@ -27,11 +23,11 @@ public abstract class BaseModel {
         createdAt = new Date();
         updatedAt = new Date();
     }
-    
+
     public Long getId() {
         return id;
     }
-    
+
     public Date getCreatedAt() {
         return createdAt;
     }
