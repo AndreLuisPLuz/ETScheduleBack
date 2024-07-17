@@ -1,10 +1,9 @@
 package ets.schedule.controllers;
 
-import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.payloads.groups.GroupPayload;
 import ets.schedule.data.responses.get.GroupGetResponse;
 import ets.schedule.interfaces.services.GroupsService;
-import ets.schedule.models.Groups;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

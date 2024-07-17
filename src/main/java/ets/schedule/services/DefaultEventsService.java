@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.CompletableFuture;
 
 public class DefaultEventsService implements EventsService {
 

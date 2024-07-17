@@ -3,7 +3,6 @@ package ets.schedule.models;
 import java.util.Date;
 
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
 
 @MappedSuperclass
 public abstract class BaseModel {

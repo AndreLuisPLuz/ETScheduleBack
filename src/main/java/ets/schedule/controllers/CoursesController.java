@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ets.schedule.Exceptions.ApplicationException;
-import ets.schedule.models.Courses;
 import ets.schedule.data.payloads.courses.CoursePayload;
 import ets.schedule.interfaces.services.CoursesService;
 

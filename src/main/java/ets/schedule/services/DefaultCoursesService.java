@@ -1,7 +1,5 @@
 package ets.schedule.services;
 
-import java.util.concurrent.CompletableFuture;
-
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.responses.get.CourseGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;

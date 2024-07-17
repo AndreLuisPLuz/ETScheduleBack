@@ -14,7 +14,6 @@ import ets.schedule.repositories.UserJPARepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
-import java.util.concurrent.CompletableFuture;
 
 public class DefaultDisciplinesService implements DisciplinesService {
 
