@@ -4,7 +4,7 @@ public record Discipline(
     String discipline_name,
     DisciplineStats stats
 ) {
-    final record DisciplineStats(
+    public final record DisciplineStats(
         float competences_average,
         String semester
     ) { }
