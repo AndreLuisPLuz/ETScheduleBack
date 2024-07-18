@@ -106,6 +106,8 @@ public class DefaultUserService implements UserService {
 
         var savedUser = repo.save(user);
 
+        System.out.println("change");
+
         return new HttpEntity<UserUpdateResponse>(
                 HttpStatusCode.valueOf(200),
                 UserUpdateResponse.Ok.buildFromEntity(savedUser));
