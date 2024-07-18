@@ -41,9 +41,7 @@ public class DefaultEventsService implements EventsService {
     @Override
     public HttpList<EventGetResponse> getAllEvents(Integer month, Integer year) {
         var profile = profilesJPARepository.findById(userSession.getProfileId())
-                .orElseThrow(() -> new ApplicationException(
-                        403, "User profile not found"
-                ));
+                .orElseThrow(() -> new ApplicationException(403, "User profile not found"));
 
         List<EventGetResponse> events = null;
 
@@ -64,9 +62,7 @@ public class DefaultEventsService implements EventsService {
         }
 
         if(profile.getRole() == ProfileRole.Instructor) {
-            var test = eventsJPARepository.findByInstructorAndDate(
-                    "0005-05-10 12:00:00.000000",
-                    4L);
+            var test = eventsJPARepository.findByInstructorAndDate("0005-05-10 12:00:00.000000", 4L);
 //            ..query not working, hibernate says column id does not exist :(..
         }
 
@@ -79,38 +75,26 @@ public class DefaultEventsService implements EventsService {
     @Override
     public HttpEntity<EventGetResponse> createEvent(EventPayload payload) {
         var profile = profilesJPARepository.findById(userSession.getProfileId())
-                .orElseThrow(() -> new ApplicationException(
-                        403, "User profile not found."
-                ));
+                .orElseThrow(() -> new ApplicationException(403, "User profile not found."));
 
         if(userSession.getProfileRole() == ProfileRole.Student) {
-            throw new ApplicationException(
-                    403, "User does not have permission to create events."
-            );
+            throw new ApplicationException(403, "User does not have permission to create events.");
         }
 
         if(userSession.getProfileRole() == ProfileRole.Instructor) {
             var discipline = disciplinesJPARepository.findById(payload.disciplineId())
-                    .orElseThrow(() -> new ApplicationException(
-                            404, "Discipline not found."
-                    ));
+                    .orElseThrow(() -> new ApplicationException(404, "Discipline not found."));
 
             if(!profile.getDisciplines().contains(discipline)) {
-                throw new ApplicationException(
-                        403, "User does not have permission to create event outside their disciplines."
-                );
+                throw new ApplicationException(403, "User does not have permission to create event outside their disciplines.");
             }
         }
 
         var group = groupsJPARepository.findById(payload.groupId()).
-                orElseThrow(() -> new ApplicationException(
-                        404, "Group could not be found."
-                ));
+                orElseThrow(() -> new ApplicationException(404, "Group could not be found."));
 
         var discipline = disciplinesJPARepository.findById(payload.disciplineId())
-                .orElseThrow(() -> new ApplicationException(
-                        404, "Discipline could not be found."
-                ));
+                .orElseThrow(() -> new ApplicationException(404, "Discipline could not be found."));
 
         var newEvent = Events.build(
                 group,
@@ -131,9 +115,7 @@ public class DefaultEventsService implements EventsService {
     }
 
     public Date formatDateFromString(String dateString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "dd-MM-yyyy'T'HH:mm:ss'Z'"
-        );
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'");
 
         dateFormat.setLenient(false);
 

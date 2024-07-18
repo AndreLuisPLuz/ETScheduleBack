@@ -1,5 +1,7 @@
 package ets.schedule.filters;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -29,9 +29,7 @@ public class DefaultGroupService implements GroupsService {
     @Override
     public HttpList<GroupGetResponse> getAllGroups() {
         if(userSession.getProfileRole() == ProfileRole.Student) {
-            throw new ApplicationException(
-                    403, "User does not have permission to view groups."
-            );
+            throw new ApplicationException(403, "User does not have permission to view groups.");
         }
 
         var groups = groupsJPARepository.findAll()
@@ -48,9 +46,7 @@ public class DefaultGroupService implements GroupsService {
     @Override
     public HttpEntity<GroupDetailedResponse> getGroupById(Long id) {
         var group = groupsJPARepository.findById(id)
-                .orElseThrow(() -> new ApplicationException(
-                        404, "Group not found"
-                ));
+                .orElseThrow(() -> new ApplicationException(404, "Group not found"));
 
         return new HttpEntity<GroupDetailedResponse>(
                 HttpStatusCode.valueOf(200),
@@ -61,9 +57,7 @@ public class DefaultGroupService implements GroupsService {
     @Override
     public HttpEntity<GroupGetResponse> createGroup(GroupPayload payload) {
         if(userSession.getProfileRole() != ProfileRole.Admin) {
-            throw new ApplicationException(
-                    403, "User does not have permission to add groups."
-            );
+            throw new ApplicationException(403, "User does not have permission to add groups.");
         }
 
         var newGroup = Groups.build(
@@ -81,9 +75,7 @@ public class DefaultGroupService implements GroupsService {
     }
 
     public Date formatDateFromString(String dateString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "dd-MM-yyyy'T'HH:mm:ss'Z'"
-        );
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'");
 
         dateFormat.setLenient(false);
 

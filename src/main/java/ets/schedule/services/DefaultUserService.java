@@ -51,9 +51,7 @@ public class DefaultUserService implements UserService {
                     .map(r -> new Profiles(r, createdUser))
                     .collect(Collectors.toList());
         } catch (IllegalArgumentException ex) {
-            throw new ApplicationException(
-                400,
-                "Role must be one of admin, instructor or student.");
+            throw new ApplicationException(400, "Role must be one of admin, instructor or student.");
         }
 
         boolean isStudent = profiles.stream().

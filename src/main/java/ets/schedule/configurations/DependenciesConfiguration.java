@@ -72,4 +72,10 @@ public class DependenciesConfiguration {
     protected FlaskIntegration flaskIntegration() {
         return new DefaultFlaskIntegration();
     }
+
+    @Bean
+    @Scope
+    protected StudentReportService studentReportService() {
+        return new DefaultStudentReportService();
+    }
 }
