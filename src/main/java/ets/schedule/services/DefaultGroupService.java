@@ -29,41 +29,48 @@ public class DefaultGroupService implements GroupsService {
     @Override
     public HttpList<GroupGetResponse> getAllGroups() {
         if(userSession.getProfileRole() == ProfileRole.Student) {
-            throw new ApplicationException(403, "User does not have permission to view groups.");
+            throw new ApplicationException(
+                    403, "User does not have permission to view groups."
+            );
         }
 
-        var groups = groupsJPARepository.findAll().stream().map(
-                GroupGetResponse::buildFromEntity
-        );
+        var groups = groupsJPARepository.findAll()
+                .stream()
+                .map(GroupGetResponse::buildFromEntity)
+                .toList();
 
         return new HttpList<GroupGetResponse>(
                 HttpStatusCode.valueOf(200),
-                groups.toList()
+                groups
         );
     }
 
     @Override
     public HttpEntity<GroupDetailedResponse> getGroupById(Long id) {
-        var group = groupsJPARepository.findById(id);
-        if(group.isEmpty()) {
-            throw new ApplicationException(404, "Group could not be found.");
-        }
+        var group = groupsJPARepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(
+                        404, "Group not found"
+                ));
 
         return new HttpEntity<GroupDetailedResponse>(
                 HttpStatusCode.valueOf(200),
-                GroupDetailedResponse.buildFromEntity(group.get())
+                GroupDetailedResponse.buildFromEntity(group)
         );
     }
 
     @Override
-    public HttpEntity<GroupGetResponse> createGroup(GroupPayload group) {
+    public HttpEntity<GroupGetResponse> createGroup(GroupPayload payload) {
         if(userSession.getProfileRole() != ProfileRole.Admin) {
-            throw new ApplicationException(403, "User does not have permission to add groups.");
+            throw new ApplicationException(
+                    403, "User does not have permission to add groups."
+            );
         }
 
-        var newGroup = new Groups(group.name(),
-                formatDateFromString(group.beginsAt()),
-                formatDateFromString(group.endsAt()));
+        var newGroup = Groups.build(
+                payload.name(),
+                formatDateFromString(payload.beginsAt()),
+                formatDateFromString(payload.endsAt())
+        );
 
         groupsJPARepository.save(newGroup);
 
@@ -74,7 +81,10 @@ public class DefaultGroupService implements GroupsService {
     }
 
     public Date formatDateFromString(String dateString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "dd-MM-yyyy'T'HH:mm:ss'Z'"
+        );
+
         dateFormat.setLenient(false);
 
         try {

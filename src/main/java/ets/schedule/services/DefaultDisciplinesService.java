@@ -18,28 +18,30 @@ import java.util.List;
 public class DefaultDisciplinesService implements DisciplinesService {
 
     @Autowired
-    private DisciplinesJPARepository disciplinesJPARepository;
+    private DisciplinesJPARepository disciplinesRepository;
 
     @Autowired
-    private CoursesJPARepository coursesJPARepository;
+    private CoursesJPARepository coursesRepository;
 
     @Autowired
-    private GroupsJPARepository groupsJPARepository;
+    private GroupsJPARepository groupsRepository;
 
     @Autowired
-    private ProfilesJPARepository profilesJPARepository;
+    private ProfilesJPARepository profilesRepository;
 
     @Autowired
     private UserSession userSession;
 
     @Override
     public HttpList<DisciplineGetResponse> getAllDisciplines() {
+
         List<DisciplineGetResponse> disciplines = null;
 
         if(userSession.getProfileRole() == ProfileRole.Admin) {
-            disciplines = disciplinesJPARepository.findAll().stream().map(
-                    DisciplineGetResponse::buildFromEntity
-            ).toList();
+            disciplines = disciplinesRepository.findAll()
+                    .stream()
+                    .map(DisciplineGetResponse::buildFromEntity)
+                    .toList();
 
             return new HttpList<DisciplineGetResponse>(
                     HttpStatusCode.valueOf(200),
@@ -47,18 +49,18 @@ public class DefaultDisciplinesService implements DisciplinesService {
             );
         }
 
-        var profile = profilesJPARepository.findById(userSession.getProfileId())
+        var profile = profilesRepository.findById(userSession.getProfileId())
                 .orElseThrow(() -> new ApplicationException(403, "User profile could not be found."));
 
-        if(userSession.getProfileRole() == ProfileRole.Instructor) {
+        if(profile.getRole() == ProfileRole.Instructor) {
             disciplines = profile.getDisciplines()
                     .stream()
                     .map(DisciplineGetResponse::buildFromEntity)
                     .toList();
         }
 
-        if(userSession.getProfileRole() == ProfileRole.Student) {
-            var group = groupsJPARepository.findById(profile.getGroup().getId())
+        if(profile.getRole() == ProfileRole.Student) {
+            var group = groupsRepository.findById(profile.getGroup().getId())
                     .orElseThrow(() -> new ApplicationException(403, "Group could not be found."));
 
             disciplines = group.getDisciplines()
@@ -75,18 +77,18 @@ public class DefaultDisciplinesService implements DisciplinesService {
 
     @Override
     public HttpEntity<DisciplineGetResponse> getDisciplineById(Long id) {
-        var discipline = disciplinesJPARepository.findById(id)
+
+        var discipline = disciplinesRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(403, "Discipline could not be found."));
 
         if(userSession.getProfileRole() == ProfileRole.Admin) {
-
             return new HttpEntity<DisciplineGetResponse>(
                     HttpStatusCode.valueOf(200),
                     DisciplineGetResponse.buildFromEntity(discipline)
             );
         }
 
-        var profile = profilesJPARepository.findById(userSession.getProfileId())
+        var profile = profilesRepository.findById(userSession.getProfileId())
                 .orElseThrow(() -> new ApplicationException(403, "User profile could not be found."));
 
         if(userSession.getProfileRole() == ProfileRole.Instructor) {
@@ -96,7 +98,7 @@ public class DefaultDisciplinesService implements DisciplinesService {
         }
 
         if(userSession.getProfileRole() == ProfileRole.Student) {
-            var group = groupsJPARepository.findById(profile.getGroup().getId())
+            var group = groupsRepository.findById(profile.getGroup().getId())
                     .orElseThrow(() -> new ApplicationException(403, "Group could not be found."));
 
             if (!group.getDisciplines().contains(discipline)) {
@@ -111,31 +113,28 @@ public class DefaultDisciplinesService implements DisciplinesService {
     }
 
     @Override
-    public HttpEntity<DisciplineGetResponse> createDiscipline(DisciplinePayload obj) {
+    public HttpEntity<DisciplineGetResponse> createDiscipline(DisciplinePayload payload) {
 
         if(userSession.getProfileRole() != ProfileRole.Admin) {
             throw new ApplicationException(403, "User does not have permission to create disciplines.");
         }
 
-        var course = coursesJPARepository.findById(obj.courseId())
+        var course = coursesRepository.findById(payload.courseId())
                 .orElseThrow(() -> new ApplicationException(403, "Course could not be found."));
 
-        var group = groupsJPARepository.findById(obj.groupId())
+        var group = groupsRepository.findById(payload.groupId())
                 .orElseThrow(() -> new ApplicationException(403, "Group could not be found."));
 
-        var instructor = profilesJPARepository.findById(obj.instructorId())
+        var instructor = profilesRepository.findById(payload.instructorId())
                 .orElseThrow(() -> new ApplicationException(403, "Instructor could not be found."));
 
-        var newDiscipline = new Disciplines(obj.semester());
-        newDiscipline.setCourse(course);
-        newDiscipline.setGroup(group);
-        newDiscipline.setInstructor(instructor);
+        var newDiscipline = Disciplines.build(group, instructor, course, payload.semester());
 
         instructor.getDisciplines().add(newDiscipline);
         course.getDisciplines().add(newDiscipline);
         group.getDisciplines().add(newDiscipline);
 
-        disciplinesJPARepository.save(newDiscipline);
+        disciplinesRepository.save(newDiscipline);
 
         return new HttpEntity<DisciplineGetResponse>(
                 HttpStatusCode.valueOf(201),

@@ -20,12 +20,6 @@ import lombok.Setter;
 @Table(name = "events")
 public class Events extends BaseModel {
 
-    public Events(Date startsAt, Date endsAt, String description) {
-        this.startsAt = startsAt;
-        this.endsAt = endsAt;
-        this.description = description;
-    }
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "group_id", nullable = false)
     private Groups group;
@@ -44,4 +38,15 @@ public class Events extends BaseModel {
 
     @Column(name = "description", nullable = false)
     private String description;
+
+    public static Events build(Groups group, Disciplines discipline, Date startsAt, Date endsAt, String description) {
+        Events events = new Events();
+        events.setGroup(group);
+        events.setDiscipline(discipline);
+        events.setStartsAt(startsAt);
+        events.setEndsAt(endsAt);
+        events.setDescription(description);
+
+        return events;
+    }
 }

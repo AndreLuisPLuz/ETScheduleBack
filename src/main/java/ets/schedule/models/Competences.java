@@ -16,11 +16,6 @@ import lombok.Setter;
 @Table(name = "competences")
 public class Competences extends BaseModel {
 
-    public Competences(String name, Float weight) {
-        this.name = name;
-        this.weight = weight;
-    }
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "discipline_id", nullable = false)
     private Disciplines discipline;
@@ -30,4 +25,13 @@ public class Competences extends BaseModel {
 
     @Column(name = "weight", nullable = false)
     private Float weight;
+
+    public Competences build(Disciplines discipline, String name, Float weight) {
+        Competences competence = new Competences();
+        competence.setDiscipline(discipline);
+        competence.setName(name);
+        competence.setWeight(weight);
+
+        return competence;
+    }
 }
