@@ -1,7 +1,7 @@
 package ets.schedule.models;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,5 +38,11 @@ public class Groups extends BaseModel {
     private Date endsAt;
 
     @OneToMany(mappedBy = "group")
-    private Set<Profiles> profiles;
+    private List<Disciplines> disciplines;
+
+    @OneToMany(mappedBy = "group")
+    private List<Events> events;
+
+    @OneToMany(mappedBy = "group")
+    private List<Profiles> profiles;
 }

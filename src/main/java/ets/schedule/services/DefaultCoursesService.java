@@ -2,6 +2,8 @@ package ets.schedule.services;
 
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.responses.get.CourseGetResponse;
+import ets.schedule.enums.ProfileRole;
+import ets.schedule.sessions.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 
@@ -15,11 +17,14 @@ import ets.schedule.repositories.CoursesJPARepository;
 public class DefaultCoursesService implements CoursesService {
 
     @Autowired
-    public CoursesJPARepository repo;
+    private CoursesJPARepository courseRepository;
+
+    @Autowired
+    private UserSession userSession;
 
     @Override
     public HttpList<CourseGetResponse> getAll() {
-        var courses = repo.findAll().stream().map(
+        var courses = courseRepository.findAll().stream().map(
                 CourseGetResponse::buildFromEntity
         );
 
@@ -31,8 +36,11 @@ public class DefaultCoursesService implements CoursesService {
 
     @Override
     public HttpEntity<CourseGetResponse> createCourse(CoursePayload payload) {
+        if(userSession.getProfileRole() != ProfileRole.Admin) {
+            throw new ApplicationException(403, "User privilege level required not attended.");
+        }
         Courses newCourse = new Courses(payload.name(), payload.description());
-        repo.save(newCourse);
+        courseRepository.save(newCourse);
 
         return new HttpEntity<>(
             HttpStatusCode.valueOf(201),
@@ -42,7 +50,11 @@ public class DefaultCoursesService implements CoursesService {
 
     @Override
     public HttpEntity<CourseGetResponse> editCourse(Long id, CoursePayload payload) {
-        var opCourse = repo.findById(id);
+        if(userSession.getProfileRole() != ProfileRole.Admin) {
+            throw new ApplicationException(403, "User privilege level required not attended.");
+        }
+
+        var opCourse = courseRepository.findById(id);
         if(opCourse.isEmpty()) {
             throw new ApplicationException(404, "Course could not be found.");
         }
@@ -55,7 +67,7 @@ public class DefaultCoursesService implements CoursesService {
             opCourse.get().setDescription(payload.description());
         }
 
-        var course = repo.save(opCourse.get());
+        var course = courseRepository.save(opCourse.get());
 
         return new HttpEntity<>(
             HttpStatusCode.valueOf(201),
