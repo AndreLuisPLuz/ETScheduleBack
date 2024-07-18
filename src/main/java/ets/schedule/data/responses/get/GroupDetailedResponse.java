@@ -20,6 +20,11 @@ public record GroupDetailedResponse(
                 .stream()
                 .filter(p -> p.getRole() == ProfileRole.Student)
                 .collect(Collectors.toList());
+        
+        if (students != null) {
+            System.out.println("Veio");
+            System.out.println(students.size());
+        }
 
         return new GroupDetailedResponse(
                 group.getId(),

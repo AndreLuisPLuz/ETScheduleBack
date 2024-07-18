@@ -25,8 +25,8 @@ public class StudentAvaliation extends BaseModel {
     private Disciplines discipline;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "student_id", nullable = false)
-    private Profiles student;
+    @JoinColumn(name = "instructor_id", nullable = false)
+    private Profiles instructor;
 
     @Column(name = "comment", nullable = false)
     private String comment;
