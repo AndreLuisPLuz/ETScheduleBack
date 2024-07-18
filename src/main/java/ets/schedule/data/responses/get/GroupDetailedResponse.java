@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.responses.profile.ProfileResponse;
 import ets.schedule.enums.ProfileRole;
 import ets.schedule.models.Groups;
@@ -21,9 +22,8 @@ public record GroupDetailedResponse(
                 .filter(p -> p.getRole() == ProfileRole.Student)
                 .collect(Collectors.toList());
         
-        if (students != null) {
-            System.out.println("Veio");
-            System.out.println(students.size());
+        if (students == null) {
+            throw new ApplicationException(500, "User data couldn't be fetched on server.");
         }
 
         return new GroupDetailedResponse(

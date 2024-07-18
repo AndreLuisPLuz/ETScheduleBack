@@ -9,6 +9,9 @@ import ets.schedule.data.responses.get.GroupGetResponse;
 import ets.schedule.interfaces.services.GroupsService;
 import ets.schedule.models.Groups;
 import ets.schedule.repositories.GroupsJPARepository;
+import ets.schedule.repositories.UserJPARepository;
+import ets.schedule.sessions.UserSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 
@@ -20,6 +23,12 @@ public class DefaultGroupService implements GroupsService {
 
     @Autowired
     private GroupsJPARepository groupsJPARepository;
+
+    @Autowired
+    private UserJPARepository userJPARepository;
+
+    @Autowired
+    private UserSession userSession;
 
     @Override
     public HttpList<GroupGetResponse> getAllGroups() {
@@ -35,14 +44,20 @@ public class DefaultGroupService implements GroupsService {
 
     @Override
     public HttpEntity<GroupDetailedResponse> getGroupById(Long id) {
-        var group = groupsJPARepository.findById(id);
-        if(group.isEmpty()) {
+        var groupFetch = groupsJPARepository.findById(id);
+        if(groupFetch.isEmpty()) {
             throw new ApplicationException(404, "Group could not be found.");
         }
 
+        var group = groupFetch.get();
+
+        var user = userJPARepository.findById(userSession.getUserId()).get();
+        for (var p : groupFetch.get().getProfiles())
+            p.setUser(user);
+
         return new HttpEntity<GroupDetailedResponse>(
                 HttpStatusCode.valueOf(200),
-                GroupDetailedResponse.buildFromEntity(group.get())
+                GroupDetailedResponse.buildFromEntity(group)
         );
     }
 
