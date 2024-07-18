@@ -6,9 +6,10 @@ import java.util.Date;
 
 public record DisciplineGetResponse(
         Long id,
-        Long groupId,
-        Long instructorId,
-        Long courseId,
+        String name,
+        String group,
+        String instructor,
+        String course,
         Integer semester,
         Date createdAt,
         Date updatedAt
@@ -16,9 +17,10 @@ public record DisciplineGetResponse(
     public static DisciplineGetResponse buildFromEntity(Disciplines discipline) {
         return new DisciplineGetResponse(
                 discipline.getId(),
-                discipline.getGroup().getId(),
-                discipline.getInstructor().getId(),
-                discipline.getCourse().getId(),
+                discipline.getCourse().getName() + " - " + discipline.getGroup().getName(),
+                discipline.getGroup().getName(),
+                discipline.getInstructor().getUser().getFullName(),
+                discipline.getCourse().getName(),
                 discipline.getSemester(),
                 discipline.getCreatedAt(),
                 discipline.getUpdatedAt()

@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatusCode;
 import java.util.List;
 
 public class DefaultDisciplinesService implements DisciplinesService {
+    @Autowired
+    private UserJPARepository userRepository;
 
     @Autowired
     private DisciplinesJPARepository disciplinesRepository;
@@ -105,6 +107,9 @@ public class DefaultDisciplinesService implements DisciplinesService {
                 throw new ApplicationException(403, "User does not have permission to access this discipline.");
             }
         }
+
+        var user = userRepository.findByProfileId(discipline.getInstructor().getId());
+        discipline.getInstructor().setUser(user.get());
 
         return new HttpEntity<DisciplineGetResponse>(
                 HttpStatusCode.valueOf(200),
