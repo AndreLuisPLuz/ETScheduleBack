@@ -4,6 +4,7 @@ import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.groups.GroupPayload;
+import ets.schedule.data.responses.get.GroupDetailedResponse;
 import ets.schedule.data.responses.get.GroupGetResponse;
 import ets.schedule.interfaces.services.GroupsService;
 import ets.schedule.models.Groups;
@@ -33,15 +34,15 @@ public class DefaultGroupService implements GroupsService {
     }
 
     @Override
-    public HttpEntity<GroupGetResponse> getGroupById(Long id) {
+    public HttpEntity<GroupDetailedResponse> getGroupById(Long id) {
         var group = groupsJPARepository.findById(id);
         if(group.isEmpty()) {
             throw new ApplicationException(404, "Group could not be found.");
         }
 
-        return new HttpEntity<GroupGetResponse>(
+        return new HttpEntity<GroupDetailedResponse>(
                 HttpStatusCode.valueOf(200),
-                GroupGetResponse.buildFromEntity(group.get())
+                GroupDetailedResponse.buildFromEntity(group.get())
         );
     }
 
