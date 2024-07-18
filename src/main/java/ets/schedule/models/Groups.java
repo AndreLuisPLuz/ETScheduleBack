@@ -1,9 +1,11 @@
 package ets.schedule.models;
 
 import java.util.Date;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -34,4 +36,7 @@ public class Groups extends BaseModel {
     @Column(name = "ends_at", nullable = false)
     @Temporal(TemporalType.DATE)
     private Date endsAt;
+
+    @OneToMany(mappedBy = "group")
+    private Set<Profiles> profiles;
 }

@@ -1,6 +1,7 @@
 package ets.schedule.controllers;
 
 import ets.schedule.data.payloads.groups.GroupPayload;
+import ets.schedule.data.responses.get.GroupDetailedResponse;
 import ets.schedule.data.responses.get.GroupGetResponse;
 import ets.schedule.interfaces.services.GroupsService;
 
@@ -23,7 +24,7 @@ public class GroupsController {
     }
 
     @GetMapping("/api/v1/group/{id}")
-    public ResponseEntity<GroupGetResponse> getGroupById(@PathVariable("id") Long id) {
+    public ResponseEntity<GroupDetailedResponse> getGroupById(@PathVariable("id") Long id) {
         var response = groupsService.getGroupById(id);
         return ResponseEntity.status(response.statusCode()).body(response.data());
     }

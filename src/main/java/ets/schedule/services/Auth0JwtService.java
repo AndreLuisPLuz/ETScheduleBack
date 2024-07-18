@@ -99,7 +99,7 @@ public class Auth0JwtService implements AuthService {
                 user.getPassword());
         
                 
-        if (passwordsMatch)
+        if (!passwordsMatch)
             throw new ApplicationException(400, "Passwords do not match.");
 
         ProfileRole profileRole;
@@ -127,7 +127,7 @@ public class Auth0JwtService implements AuthService {
             token = JWT.create()
                     .withIssuer("Andrezinho")
                     .withClaim("userId", user.getId().toString())
-                    .withClaim("profileId", profiles.get(0).getId())
+                    .withClaim("profileId", profiles.get(0).getId().toString())
                     .withClaim("role", profileRole.getRole())
                     .withExpiresAt(Instant.now().plusSeconds(28800))
                     .sign(algorithm);
