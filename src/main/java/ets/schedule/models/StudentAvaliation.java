@@ -27,10 +27,10 @@ public class StudentAvaliation extends BaseModel {
     @Column(name = "comment", nullable = false)
     private String comment;
 
-    public static StudentAvaliation build(Disciplines discipline, Profiles student, String comment) {
+    public static StudentAvaliation build(Disciplines discipline, Profiles instructor, String comment) {
         StudentAvaliation studentAvaliation = new StudentAvaliation();
         studentAvaliation.setDiscipline(discipline);
-        studentAvaliation.setStudent(student);
+        studentAvaliation.setInstructor(instructor);
         studentAvaliation.setComment(comment);
 
         return studentAvaliation;
