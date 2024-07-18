@@ -15,10 +15,18 @@ public record EventGetResponse(
         Date updatedAt
 ) {
     public static EventGetResponse buildFromEntity(Events event) {
+        var groupId = event.getGroup() == null
+                ? null
+                : event.getGroup().getId();
+        
+        var disciplineId = event.getDiscipline() == null
+                ? null
+                : event.getDiscipline().getId();
+
         return new EventGetResponse(
                 event.getId(),
-                event.getGroup().getId(),
-                event.getDiscipline().getId(),
+                groupId,
+                disciplineId,
                 event.getStartsAt(),
                 event.getEndsAt(),
                 event.getDescription(),
