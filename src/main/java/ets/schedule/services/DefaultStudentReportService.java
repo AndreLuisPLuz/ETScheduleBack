@@ -2,6 +2,7 @@ package ets.schedule.services;
 
 import java.util.concurrent.ExecutionException;
 
+import ets.schedule.repositories.ProfilesJPARepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 
@@ -12,7 +13,6 @@ import ets.schedule.integrations.flask.responses.DisciplinesResponse;
 import ets.schedule.integrations.flask.responses.SkillsResponse;
 import ets.schedule.interfaces.integrations.FlaskIntegration;
 import ets.schedule.interfaces.services.StudentReportService;
-import ets.schedule.repositories.ProfilesJPARepository;
 
 public class DefaultStudentReportService implements StudentReportService {
     @Autowired

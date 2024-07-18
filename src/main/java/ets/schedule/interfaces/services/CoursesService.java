@@ -2,7 +2,7 @@ package ets.schedule.interfaces.services;
 
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
-import ets.schedule.data.payloads.courses.CoursePayload;
+import ets.schedule.data.payloads.CoursePayload;
 import ets.schedule.data.responses.get.CourseGetResponse;
 
 public interface CoursesService {

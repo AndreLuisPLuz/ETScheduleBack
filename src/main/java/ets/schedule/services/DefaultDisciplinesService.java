@@ -3,7 +3,7 @@ package ets.schedule.services;
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
-import ets.schedule.data.payloads.disciplines.DisciplinePayload;
+import ets.schedule.data.payloads.DisciplinePayload;
 import ets.schedule.data.responses.get.DisciplineGetResponse;
 import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.DisciplinesService;

@@ -30,7 +30,7 @@ import ets.schedule.data.responses.profile.ProfileResponse;
 import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.AuthService;
 import ets.schedule.interfaces.services.PasswordService;
-import ets.schedule.repositories.ProfileJPARepository;
+import ets.schedule.repositories.ProfilesJPARepository;
 import ets.schedule.repositories.UserJPARepository;
 
 public class Auth0JwtService implements AuthService {
@@ -38,7 +38,7 @@ public class Auth0JwtService implements AuthService {
     UserJPARepository userRepo;
 
     @Autowired
-    ProfileJPARepository profileRepo;
+    ProfilesJPARepository profileRepo;
 
     @Autowired
     PasswordService passwordService;

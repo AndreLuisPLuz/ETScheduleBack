@@ -2,7 +2,7 @@ package ets.schedule.controllers;
 
 import java.util.List;
 
-import ets.schedule.data.payloads.disciplines.DisciplinePayload;
+import ets.schedule.data.payloads.DisciplinePayload;
 import ets.schedule.data.responses.get.DisciplineGetResponse;
 import ets.schedule.interfaces.services.DisciplinesService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,7 @@ package ets.schedule.services;
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
-import ets.schedule.data.payloads.groups.GroupPayload;
+import ets.schedule.data.payloads.GroupPayload;
 import ets.schedule.data.responses.get.GroupDetailedResponse;
 import ets.schedule.data.responses.get.GroupGetResponse;
 import ets.schedule.enums.ProfileRole;

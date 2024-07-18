@@ -1,10 +1,9 @@
 package ets.schedule.controllers;
 
-import ets.schedule.data.payloads.event.EventPayload;
+import ets.schedule.data.payloads.EventPayload;
 import ets.schedule.data.responses.get.EventGetResponse;
 import ets.schedule.interfaces.services.EventsService;
 
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

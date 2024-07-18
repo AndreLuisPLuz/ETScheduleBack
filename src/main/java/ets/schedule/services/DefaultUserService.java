@@ -20,7 +20,7 @@ import ets.schedule.interfaces.services.UserService;
 import ets.schedule.models.Users;
 import ets.schedule.models.Profiles;
 import ets.schedule.repositories.GroupsJPARepository;
-import ets.schedule.repositories.ProfileJPARepository;
+import ets.schedule.repositories.ProfilesJPARepository;
 import ets.schedule.repositories.UserJPARepository;
 
 public class DefaultUserService implements UserService {
@@ -28,7 +28,7 @@ public class DefaultUserService implements UserService {
     UserJPARepository repo;
 
     @Autowired
-    ProfileJPARepository profileRepo;
+    ProfilesJPARepository profileRepo;
 
     @Autowired
     GroupsJPARepository groupRepo;

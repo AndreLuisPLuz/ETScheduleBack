@@ -1,6 +1,6 @@
 package ets.schedule.controllers;
 
-import ets.schedule.data.payloads.groups.GroupPayload;
+import ets.schedule.data.payloads.GroupPayload;
 import ets.schedule.data.responses.get.GroupDetailedResponse;
 import ets.schedule.data.responses.get.GroupGetResponse;
 import ets.schedule.interfaces.services.GroupsService;

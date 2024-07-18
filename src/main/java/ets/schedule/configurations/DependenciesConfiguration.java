@@ -4,6 +4,7 @@ import ets.schedule.filters.AuthFilter;
 import ets.schedule.integrations.flask.DefaultFlaskIntegration;
 import ets.schedule.interfaces.integrations.FlaskIntegration;
 import ets.schedule.interfaces.services.*;
+import ets.schedule.models.StudentCompetences;
 import ets.schedule.services.*;
 import ets.schedule.sessions.UserSession;
 import org.springframework.context.annotation.Bean;
@@ -77,5 +78,23 @@ public class DependenciesConfiguration {
     @Scope
     protected StudentReportService studentReportService() {
         return new DefaultStudentReportService();
+    }
+
+    @Bean
+    @Scope
+    protected CompetencesService competencesService() {
+        return new DefaultCompetencesService();
+    }
+
+    @Bean
+    @Scope
+    protected StudentCompetencesService studentCompetencesService() {
+        return new DefaultStudentCompetenceService();
+    }
+
+    @Bean
+    @Scope
+    protected StudentAvaliationService studentAvaliationService() {
+        return new DefaultStudentAvaliationService();
     }
 }
