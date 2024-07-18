@@ -16,10 +16,6 @@ import lombok.Setter;
 @Table(name = "student_competences")
 public class StudentCompetences extends BaseModel {
 
-    public StudentCompetences(String degree) {
-        this.degree = degree;
-    }
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "competence_id", nullable = false)
     private Competences competence;
@@ -30,4 +26,13 @@ public class StudentCompetences extends BaseModel {
 
     @Column(name = "degree", nullable = false)
     private String degree;
+
+    public static StudentCompetences build(Competences competence, Profiles student, String degree) {
+        StudentCompetences studentCompetences = new StudentCompetences();
+        studentCompetences.setCompetence(competence);
+        studentCompetences.setStudent(student);
+        studentCompetences.setDegree(degree);
+
+        return studentCompetences;
+    }
 }

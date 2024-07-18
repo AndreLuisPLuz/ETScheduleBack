@@ -20,12 +20,6 @@ import lombok.Setter;
 @Table(name = "groups")
 public class Groups extends BaseModel {
 
-    public Groups(String name, Date beginsAt, Date endsAt) {
-        this.name = name;
-        this.beginsAt = beginsAt;
-        this.endsAt = endsAt;
-    }
-
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -45,4 +39,13 @@ public class Groups extends BaseModel {
 
     @OneToMany(mappedBy = "group")
     private List<Profiles> profiles;
+
+    public static Groups build(String name, Date beginsAt, Date endsAt) {
+        Groups group = new Groups();
+        group.setName(name);
+        group.setBeginsAt(beginsAt);
+        group.setEndsAt(endsAt);
+
+        return group;
+    }
 }

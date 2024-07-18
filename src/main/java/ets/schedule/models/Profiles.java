@@ -48,6 +48,6 @@ public class Profiles extends BaseModel {
     @OneToMany(mappedBy = "instructor")
     public List<InstructorSkills> instructorSkills;
 
-    @OneToMany(mappedBy = "instructor")
+    @OneToMany(mappedBy = "student")
     public List<StudentAvaliation> studentAvaliations;
 }

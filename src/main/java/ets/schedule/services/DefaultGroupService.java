@@ -6,11 +6,11 @@ import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.groups.GroupPayload;
 import ets.schedule.data.responses.get.GroupDetailedResponse;
 import ets.schedule.data.responses.get.GroupGetResponse;
+import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.GroupsService;
 import ets.schedule.models.Groups;
 import ets.schedule.repositories.GroupsJPARepository;
-import ets.schedule.repositories.UserJPARepository;
-
+import ets.schedule.sessions.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 
@@ -24,40 +24,33 @@ public class DefaultGroupService implements GroupsService {
     private GroupsJPARepository groupsJPARepository;
 
     @Autowired
-    private UserJPARepository userJPARepository;
+    private UserSession userSession;
 
     @Override
     public HttpList<GroupGetResponse> getAllGroups() {
-        var groups = groupsJPARepository.findAll().stream().map(
-                GroupGetResponse::buildFromEntity
-        );
+        if(userSession.getProfileRole() == ProfileRole.Student) {
+            throw new ApplicationException(
+                    403, "User does not have permission to view groups."
+            );
+        }
+
+        var groups = groupsJPARepository.findAll()
+                .stream()
+                .map(GroupGetResponse::buildFromEntity)
+                .toList();
 
         return new HttpList<GroupGetResponse>(
                 HttpStatusCode.valueOf(200),
-                groups.toList()
+                groups
         );
     }
 
     @Override
     public HttpEntity<GroupDetailedResponse> getGroupById(Long id) {
-        var groupFetch = groupsJPARepository.findById(id);
-        if(groupFetch.isEmpty()) {
-            throw new ApplicationException(404, "Group could not be found.");
-        }
-
-        var group = groupFetch.get();
-
-        for (var p : group.getProfiles()) {
-            var userFetch = userJPARepository.findByProfileId(p.getId());
-
-            if (!userFetch.isPresent())
-                throw new ApplicationException(500, "User data couldn't be fetched on server.");
-
-            var user = userFetch.get();
-            p.setUser(user);
-
-            System.out.println(user.getFullName());
-        }
+        var group = groupsJPARepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(
+                        404, "Group not found"
+                ));
 
         return new HttpEntity<GroupDetailedResponse>(
                 HttpStatusCode.valueOf(200),
@@ -66,10 +59,18 @@ public class DefaultGroupService implements GroupsService {
     }
 
     @Override
-    public HttpEntity<GroupGetResponse> createGroup(GroupPayload group) {
-        var newGroup = new Groups(group.name(),
-                formatDateFromString(group.beginsAt()),
-                formatDateFromString(group.endsAt()));
+    public HttpEntity<GroupGetResponse> createGroup(GroupPayload payload) {
+        if(userSession.getProfileRole() != ProfileRole.Admin) {
+            throw new ApplicationException(
+                    403, "User does not have permission to add groups."
+            );
+        }
+
+        var newGroup = Groups.build(
+                payload.name(),
+                formatDateFromString(payload.beginsAt()),
+                formatDateFromString(payload.endsAt())
+        );
 
         groupsJPARepository.save(newGroup);
 
@@ -80,7 +81,10 @@ public class DefaultGroupService implements GroupsService {
     }
 
     public Date formatDateFromString(String dateString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "dd-MM-yyyy'T'HH:mm:ss'Z'"
+        );
+
         dateFormat.setLenient(false);
 
         try {

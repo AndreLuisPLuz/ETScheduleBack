@@ -16,11 +16,6 @@ import lombok.Setter;
 @Table(name = "instructor_skills")
 public class InstructorSkills extends BaseModel {
 
-    public InstructorSkills(String subject, Integer value) {
-        this.subject = subject;
-        this.value = value;
-    }
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "instructor_id", nullable = false)
     private Profiles instructor;
@@ -30,4 +25,13 @@ public class InstructorSkills extends BaseModel {
 
     @Column(name = "value", nullable = false)
     private Integer value;
+
+    public static InstructorSkills build(Profiles instructor, String subject, Integer value) {
+        InstructorSkills skills = new InstructorSkills();
+        skills.setInstructor(instructor);
+        skills.setSubject(subject);
+        skills.setValue(value);
+
+        return skills;
+    }
 }

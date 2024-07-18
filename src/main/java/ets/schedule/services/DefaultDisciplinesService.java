@@ -13,9 +13,7 @@ import ets.schedule.repositories.*;
 import ets.schedule.sessions.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
-
 import java.util.List;
-import java.util.Optional;
 
 public class DefaultDisciplinesService implements DisciplinesService {
 
@@ -60,45 +58,43 @@ public class DefaultDisciplinesService implements DisciplinesService {
 
     @Override
     public HttpEntity<DisciplineGetResponse> getDisciplineById(Long id) {
-        Optional<Disciplines> discipline = null;
-
-        if(userSession.getProfileRole() == ProfileRole.Admin) {
-            discipline = disciplinesJPARepository.findById(id);
-        }
-
-//        if(userSession.getProfileRole() == ProfileRole.Instructor) {
-//            var
-//        }
-
-        if (discipline.isEmpty()) {
-            throw new ApplicationException(404, "Discipline could not be found.");
-        }
-
-        return new HttpEntity<DisciplineGetResponse>(
-                HttpStatusCode.valueOf(200),
-                DisciplineGetResponse.buildFromEntity(discipline.get())
-        );
+        return null;
     }
+
+//    @Override
+//    public HttpEntity<DisciplineGetResponse> getDisciplineById(Long id) {
+//        Optional<Disciplines> discipline = null;
+//
+//        if(userSession.getProfileRole() == ProfileRole.Admin) {
+//            discipline = disciplinesJPARepository.findById(id);
+//        }
+//
+////        if(userSession.getProfileRole() == ProfileRole.Instructor) {
+////            var
+////        }
+//
+//        if (discipline.isEmpty()) {
+//            throw new ApplicationException(404, "Discipline could not be found.");
+//        }
+//
+//        return new HttpEntity<DisciplineGetResponse>(
+//                HttpStatusCode.valueOf(200),
+//                DisciplineGetResponse.buildFromEntity(discipline.get())
+//        );
+//    }
 
     @Override
     public HttpEntity<DisciplineGetResponse> createDiscipline(DisciplinePayload obj) {
-        var course = coursesJPARepository.findById(obj.courseId());
-        var group = groupsJPARepository.findById(obj.groupId());
-        var instructor = profilesJPARepository.findById(obj.instructorId());
+        var course = coursesJPARepository.findById(obj.courseId())
+                .orElseThrow(() -> new ApplicationException(404, "Course could not be found."));
 
-        if(course.isEmpty()) {
-            throw new ApplicationException(404, "Course could not be found.");
-        } else if(group.isEmpty()) {
-            throw new ApplicationException(404, "Group could not be found.");
-        } else if(instructor.isEmpty()) {
-            throw new ApplicationException(404, "Instructor could not be found.");
-        }
+        var group = groupsJPARepository.findById(obj.groupId())
+                .orElseThrow(() -> new ApplicationException(404, "Group could not be found."));
 
-        var newDiscipline = new Disciplines(obj.semester());
-        newDiscipline.setCourse(course.get());
-        newDiscipline.setGroup(group.get());
-        newDiscipline.setInstructor(instructor.get());
+        var instructor = profilesJPARepository.findById(obj.instructorId())
+                .orElseThrow(() -> new ApplicationException(404, "Instructor could not be found."));
 
+        var newDiscipline = Disciplines.build(group, instructor, course, obj.semester());
         disciplinesJPARepository.save(newDiscipline);
 
         return new HttpEntity<DisciplineGetResponse>(

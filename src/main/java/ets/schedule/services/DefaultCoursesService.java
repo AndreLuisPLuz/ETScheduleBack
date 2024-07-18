@@ -24,13 +24,14 @@ public class DefaultCoursesService implements CoursesService {
 
     @Override
     public HttpList<CourseGetResponse> getAll() {
-        var courses = courseRepository.findAll().stream().map(
-                CourseGetResponse::buildFromEntity
-        );
+        var courses = courseRepository.findAll()
+                .stream()
+                .map(CourseGetResponse::buildFromEntity)
+                .toList();
 
         return new HttpList<CourseGetResponse>(
             HttpStatusCode.valueOf(200),
-            courses.toList()
+            courses
         );
     }
 
@@ -39,7 +40,7 @@ public class DefaultCoursesService implements CoursesService {
         if(userSession.getProfileRole() != ProfileRole.Admin) {
             throw new ApplicationException(403, "User privilege level required not attended.");
         }
-        Courses newCourse = new Courses(payload.name(), payload.description());
+        var newCourse = Courses.build(payload.name(), payload.description());
         courseRepository.save(newCourse);
 
         return new HttpEntity<>(
@@ -54,20 +55,18 @@ public class DefaultCoursesService implements CoursesService {
             throw new ApplicationException(403, "User privilege level required not attended.");
         }
 
-        var opCourse = courseRepository.findById(id);
-        if(opCourse.isEmpty()) {
-            throw new ApplicationException(404, "Course could not be found.");
-        }
+        var course = courseRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(404, "Course not found."));
 
         if (payload.name() != null && !payload.name().isEmpty()) {
-            opCourse.get().setName(payload.name());
+            course.setName(payload.name());
         }
 
         if (payload.description() != null && !payload.description().isEmpty()) {
-            opCourse.get().setDescription(payload.description());
+            course.setDescription(payload.description());
         }
 
-        var course = courseRepository.save(opCourse.get());
+        courseRepository.save(course);
 
         return new HttpEntity<>(
             HttpStatusCode.valueOf(201),
