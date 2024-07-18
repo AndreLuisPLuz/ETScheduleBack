@@ -10,7 +10,6 @@ import ets.schedule.interfaces.services.GroupsService;
 import ets.schedule.models.Groups;
 import ets.schedule.repositories.GroupsJPARepository;
 import ets.schedule.repositories.UserJPARepository;
-import ets.schedule.sessions.UserSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -26,9 +25,6 @@ public class DefaultGroupService implements GroupsService {
 
     @Autowired
     private UserJPARepository userJPARepository;
-
-    @Autowired
-    private UserSession userSession;
 
     @Override
     public HttpList<GroupGetResponse> getAllGroups() {
@@ -51,9 +47,17 @@ public class DefaultGroupService implements GroupsService {
 
         var group = groupFetch.get();
 
-        var user = userJPARepository.findById(userSession.getUserId()).get();
-        for (var p : groupFetch.get().getProfiles())
+        for (var p : group.getProfiles()) {
+            var userFetch = userJPARepository.findByProfileId(p.getId());
+
+            if (!userFetch.isPresent())
+                throw new ApplicationException(500, "User data couldn't be fetched on server.");
+
+            var user = userFetch.get();
             p.setUser(user);
+
+            System.out.println(user.getFullName());
+        }
 
         return new HttpEntity<GroupDetailedResponse>(
                 HttpStatusCode.valueOf(200),
