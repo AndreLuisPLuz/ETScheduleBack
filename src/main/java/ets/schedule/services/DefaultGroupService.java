@@ -6,9 +6,11 @@ import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.groups.GroupPayload;
 import ets.schedule.data.responses.get.GroupDetailedResponse;
 import ets.schedule.data.responses.get.GroupGetResponse;
+import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.GroupsService;
 import ets.schedule.models.Groups;
 import ets.schedule.repositories.GroupsJPARepository;
+import ets.schedule.sessions.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 
@@ -21,8 +23,15 @@ public class DefaultGroupService implements GroupsService {
     @Autowired
     private GroupsJPARepository groupsJPARepository;
 
+    @Autowired
+    private UserSession userSession;
+
     @Override
     public HttpList<GroupGetResponse> getAllGroups() {
+        if(userSession.getProfileRole() == ProfileRole.Student) {
+            throw new ApplicationException(403, "User does not have permission to view groups.");
+        }
+
         var groups = groupsJPARepository.findAll().stream().map(
                 GroupGetResponse::buildFromEntity
         );
@@ -48,6 +57,10 @@ public class DefaultGroupService implements GroupsService {
 
     @Override
     public HttpEntity<GroupGetResponse> createGroup(GroupPayload group) {
+        if(userSession.getProfileRole() != ProfileRole.Admin) {
+            throw new ApplicationException(403, "User does not have permission to add groups.");
+        }
+
         var newGroup = new Groups(group.name(),
                 formatDateFromString(group.beginsAt()),
                 formatDateFromString(group.endsAt()));

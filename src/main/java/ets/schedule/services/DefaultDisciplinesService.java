@@ -131,6 +131,10 @@ public class DefaultDisciplinesService implements DisciplinesService {
         newDiscipline.setGroup(group);
         newDiscipline.setInstructor(instructor);
 
+        instructor.getDisciplines().add(newDiscipline);
+        course.getDisciplines().add(newDiscipline);
+        group.getDisciplines().add(newDiscipline);
+
         disciplinesJPARepository.save(newDiscipline);
 
         return new HttpEntity<DisciplineGetResponse>(
