@@ -19,12 +19,6 @@ import java.util.Set;
 @Table(name = "courses")
 public class Courses extends BaseModel {
 
-    public Courses(String name, String description) {
-        super();
-        this.name = name;
-        this.description = description;
-    }
-
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -34,4 +28,12 @@ public class Courses extends BaseModel {
     @Fetch(FetchMode.JOIN)
     @OneToMany(mappedBy = "course")
     private Set<Disciplines> disciplines;
+
+    public static Courses build(String name, String description) {
+        Courses course = new Courses();
+        course.setName(name);
+        course.setDescription(description);
+
+        return course;
+    }
 }

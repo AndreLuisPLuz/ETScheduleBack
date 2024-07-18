@@ -14,10 +14,6 @@ import java.util.List;
 @Table(name = "disciplines")
 public class Disciplines extends BaseModel {
 
-    public Disciplines(Integer semester) {
-        this.semester = semester;
-    }
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "group_id", nullable = false)
     private Groups group;
@@ -41,4 +37,14 @@ public class Disciplines extends BaseModel {
 
     @OneToMany(mappedBy = "discipline")
     private List<StudentAvaliation> studentAvaliations;
+
+    public static Disciplines build(Groups group, Profiles instructor, Courses course, Integer semester) {
+        Disciplines discipline = new Disciplines();
+        discipline.setGroup(group);
+        discipline.setInstructor(instructor);
+        discipline.setCourse(course);
+        discipline.setSemester(semester);
+
+        return discipline;
+    }
 }
