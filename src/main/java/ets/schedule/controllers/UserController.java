@@ -1,5 +1,7 @@
 package ets.schedule.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +18,9 @@ import ets.schedule.sessions.UserSession;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 
 @RestController
@@ -46,4 +51,13 @@ public class UserController {
 
         return ResponseEntity.status(response.statusCode()).body(response.data());
     }
+
+    @GetMapping("/api/v1/user")
+    public ResponseEntity<List<UserResponse>> getAllUsers(
+            @RequestParam(required = false) String role
+    ) {
+        var response = service.fetchAllUsers(role);
+        return ResponseEntity.status(response.statusCode()).body(response.data());
+    }
+    
 }

@@ -24,7 +24,8 @@ public class FiltersConfiguration {
             "/api/v1/course/*",
             "/api/v1/discipline/*",
             "/api/v1/event/*",
-                "/api/v1/group/*"
+            "/api/v1/group/*",
+            "/api/v1/report/*"
         );
         registrationBean.setOrder(1);
 

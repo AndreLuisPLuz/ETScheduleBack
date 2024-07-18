@@ -36,4 +36,7 @@ public interface EventsJPARepository extends JpaRepository<Events, Long> {
             nativeQuery = true)
     List<Events> findByInstructorAndDate(@Param("startsAt") String startsAt,
                                          @Param("instructorId") Long instructorId);
+
+    @Query(value = "SELECT e FROM Events e INNER JOIN e.discipline d INNER JOIN d.instructor i WHERE i.id = :instructorId")
+    List<Events> findByInstructorId(Long instructorId);
 }

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import ets.schedule.models.Users;
 
 public record UserResponse(
+    Long id,
     String username,
     String fullName,
     Date birthDate,
@@ -19,6 +20,7 @@ public record UserResponse(
                 .collect(Collectors.toList());
 
         return new UserResponse(
+            entity.getId(),
             entity.getUsername(),
             entity.getFullName(),
             entity.getBirthDate(),

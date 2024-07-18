@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatusCode;
 
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.HttpEntity;
+import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.user.UserCreatePayload;
 import ets.schedule.data.payloads.user.UserUpdatePayload;
 import ets.schedule.data.responses.user.UserResponse;
@@ -128,4 +129,28 @@ public class DefaultUserService implements UserService {
 
         profile.setGroup(group.get());
     }
+
+	@Override
+	public HttpList<UserResponse> fetchAllUsers(String roleSearch) {
+        List<Users> matchingUsers;
+
+        if (roleSearch != null) {
+            ProfileRole role;
+            try {
+                role = ProfileRole.getRole(roleSearch);
+            } catch (IllegalArgumentException ex) {
+                throw new ApplicationException(400, "Invalid role.");
+            }
+
+            matchingUsers = repo.findByRole(role);
+        } else {
+            matchingUsers = repo.findAll();
+        }
+
+        return new HttpList<>(
+            HttpStatusCode.valueOf(200),
+            matchingUsers.stream()
+                .map(UserResponse::buildFromEntity)
+                .toList());
+	}
 }

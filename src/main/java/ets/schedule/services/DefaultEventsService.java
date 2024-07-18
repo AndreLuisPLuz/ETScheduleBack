@@ -18,7 +18,9 @@ import org.springframework.http.HttpStatus;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class DefaultEventsService implements EventsService {
@@ -62,8 +64,25 @@ public class DefaultEventsService implements EventsService {
         }
 
         if(profile.getRole() == ProfileRole.Instructor) {
-            var test = eventsJPARepository.findByInstructorAndDate("0005-05-10 12:00:00.000000", 4L);
-//            ..query not working, hibernate says column id does not exist :(..
+            var initialDate = new GregorianCalendar(year, month, 1);
+            var finalDate = new GregorianCalendar(year, month, 
+                    GregorianCalendar.getInstance()
+                        .getActualMaximum(GregorianCalendar.DAY_OF_MONTH
+            ));
+
+            var allEvents = eventsJPARepository.findByInstructorId(profile.getId());
+
+            events = allEvents.stream()
+                    .filter(e -> {
+                        var startsAt = castToCalendar(e.getStartsAt());
+                        var endsAt = castToCalendar(e.getEndsAt());
+
+                        boolean isBetween = (initialDate.compareTo(startsAt) > 0)
+                                && (finalDate.compareTo(endsAt) < 0);
+                        
+                        return isBetween;})
+                    .map(EventGetResponse::buildFromEntity)
+                    .toList();
         }
 
         return new HttpList<>(
@@ -125,5 +144,12 @@ public class DefaultEventsService implements EventsService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private Calendar castToCalendar(Date date) {
+        var cal = GregorianCalendar.getInstance();
+        cal.setTime(date);
+
+        return cal;
     }
 }
