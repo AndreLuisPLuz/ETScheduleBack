@@ -17,9 +17,9 @@ public class StudentReportController {
 
     @GetMapping("/api/v1/report/profile/{id}")
     public ResponseEntity<ReportResponse> getStudentResponse(
-            @PathVariable Long profileId
+            @PathVariable Long id
     ) {
-        var response = service.fetchStudentReport(profileId);
+        var response = service.fetchStudentReport(id);
         return ResponseEntity.status(response.statusCode()).body(response.data());
     }
 }

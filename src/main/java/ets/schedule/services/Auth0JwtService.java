@@ -108,12 +108,12 @@ public class Auth0JwtService implements AuthService {
         } catch (IllegalArgumentException ex) {
             throw new ApplicationException(400, "Invalid user role.");
         }
-
-        var profiles = profileRepo.findByUser(user)
-                .stream()
-                .filter(p -> p.getRole().equals(profileRole))
-                .collect(Collectors.toList());
         
+        var profiles = profileRepo.findByUser(user)
+            .stream()
+            .filter(p -> p.getRole().equals(profileRole))
+            .collect(Collectors.toList());
+
         if (profiles.size() == 0)
             throw new ApplicationException(400, "Role not atributed to user.");
 

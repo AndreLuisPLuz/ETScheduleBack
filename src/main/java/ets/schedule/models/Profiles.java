@@ -39,7 +39,7 @@ public class Profiles extends BaseModel {
     @Column(name = "role", nullable = false)
     private ProfileRole role;
 
-    @Column(name = "consensus", nullable = true)
+    @Column(name = "consensus", length = 2000, nullable = true)
     private String consensus;
 
     @OneToMany(mappedBy = "instructor")
@@ -48,6 +48,6 @@ public class Profiles extends BaseModel {
     @OneToMany(mappedBy = "instructor")
     public List<InstructorSkills> instructorSkills;
 
-    @OneToMany(mappedBy = "instructor")
+    @OneToMany(mappedBy = "student")
     public List<StudentAvaliation> studentAvaliations;
 }
