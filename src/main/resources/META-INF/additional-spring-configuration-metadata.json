@@ -1,5 +1,32 @@
-{"properties": [{
-  "name": "info.external.flask.baseurl",
-  "type": "java.lang.String",
-  "description": "A description for 'info.external.flask.baseurl'"
-}]}
+{"properties": [
+  {
+    "name": "info.external.flask.baseurl",
+    "type": "java.lang.String",
+    "description": "Base URL for the Flask ETSchedule API."
+  },
+  {
+    "name": "info.external.flask.username",
+    "type": "java.lang.String",
+    "description": "Server internal username in the database."
+  },
+  {
+    "name": "info.external.flask.password",
+    "type": "java.lang.String",
+    "description": "Server internal password in the database."
+  },
+  {
+    "name": "info.external.flask.routes.login",
+    "type": "java.lang.String",
+    "description": "Route for login action."
+  },
+  {
+    "name": "info.external.flask.routes.skills",
+    "type": "java.lang.String",
+    "description": "Route to fetch hard and soft skills for a given student profile."
+  },
+  {
+    "name": "info.external.flask.routes.disciplines",
+    "type": "java.lang.String",
+    "description": "Route to fetch the performance for a given student profile on their disciplines."
+  }
+]}
