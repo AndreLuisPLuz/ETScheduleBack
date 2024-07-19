@@ -135,7 +135,11 @@ public class Auth0JwtService implements AuthService {
             throw new ApplicationException(500, "Claims couldn't be converted.");
         }
 
-        var response = new AuthResponse("Successful login.", token);
+        var response = new AuthResponse(
+            "Successful login.",
+            token,
+            user.getId()
+        );
 
         return new HttpEntity<AuthResponse>(
                 HttpStatusCode.valueOf(200),
