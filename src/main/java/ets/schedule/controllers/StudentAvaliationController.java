@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class StudentAvaliationController {
 
@@ -16,7 +18,7 @@ public class StudentAvaliationController {
     private StudentAvaliationService studentAvaliationService;
 
     @GetMapping("api/v1/avaliation")
-    public ResponseEntity<StudentAvaliationGetResponse> getStudentAvaliation(
+    public ResponseEntity<List<StudentAvaliationGetResponse>> getStudentAvaliation(
             @RequestParam Long studentId,
             @RequestParam Long disciplineId
     ) {
