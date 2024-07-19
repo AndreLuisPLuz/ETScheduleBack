@@ -42,48 +42,38 @@ public class DefaultEventsService implements EventsService {
 
     @Override
     public HttpList<EventGetResponse> getAllEvents(Integer month, Integer year) {
-        var profile = profilesJPARepository.findById(userSession.getProfileId())
-                .orElseThrow(() -> new ApplicationException(403, "User profile not found"));
+        var role = userSession.getProfileRole();
+        var profile = profilesJPARepository.findById(userSession.getProfileId()).get();
 
-        List<EventGetResponse> events = null;
+        List<Events> allEvents;
 
-        if(profile.getRole() == ProfileRole.Admin) {
-            events = eventsJPARepository.findAll()
-                    .stream()
-                    .map(EventGetResponse::buildFromEntity)
-                    .toList();
-        }
-
-        if(profile.getRole() == ProfileRole.Student) {
+        if(role == ProfileRole.Admin) {
+            allEvents = eventsJPARepository.findAll();
+        } else if(role == ProfileRole.Student) {
             var group = profile.getGroup();
-
-            events = eventsJPARepository.findByMonthAndYear(month, year, group.getId())
-                    .stream()
-                    .map(EventGetResponse::buildFromEntity)
-                    .toList();
+            allEvents = eventsJPARepository.findByGroupId(group.getId());
+        } else if(role == ProfileRole.Instructor) {
+            allEvents = eventsJPARepository.findByInstructorId(profile.getId());
+        } else {
+            throw new ApplicationException(403, "Invalid user role.");
         }
 
-        if(profile.getRole() == ProfileRole.Instructor) {
-            var initialDate = new GregorianCalendar(year, month, 1);
-            var finalDate = new GregorianCalendar(year, month, 
-                    GregorianCalendar.getInstance()
-                        .getActualMaximum(GregorianCalendar.DAY_OF_MONTH
-            ));
+        var initialDate = new GregorianCalendar(year, month, 1);
+        var finalDate = new GregorianCalendar(year, month, 
+                GregorianCalendar.getInstance()
+            .getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
 
-            var allEvents = eventsJPARepository.findByInstructorId(profile.getId());
+        var events = allEvents.stream()
+                .filter(e -> {
+                    var startsAt = castToCalendar(e.getStartsAt());
+                    var endsAt = castToCalendar(e.getEndsAt());
 
-            events = allEvents.stream()
-                    .filter(e -> {
-                        var startsAt = castToCalendar(e.getStartsAt());
-                        var endsAt = castToCalendar(e.getEndsAt());
-
-                        boolean isBetween = (initialDate.compareTo(startsAt) > 0)
-                                && (finalDate.compareTo(endsAt) < 0);
+                    boolean isBetween = (initialDate.compareTo(startsAt) < 0)
+                            && (finalDate.compareTo(endsAt) > 0);
                         
-                        return isBetween;})
-                    .map(EventGetResponse::buildFromEntity)
-                    .toList();
-        }
+                    return isBetween; })
+                .map(EventGetResponse::buildFromEntity)
+                .toList();
 
         return new HttpList<>(
                 HttpStatus.valueOf(200),
@@ -119,7 +109,7 @@ public class DefaultEventsService implements EventsService {
             event.setDiscipline(discipline);
 
         } else if (payload.groupId().isPresent()) {
-            var group = groupsJPARepository.findById(payload.disciplineId().get())
+            var group = groupsJPARepository.findById(payload.groupId().get())
                 .orElseThrow(() ->
                     new ApplicationException(404, "Group not found."));
             

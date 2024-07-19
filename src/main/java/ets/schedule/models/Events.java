@@ -20,11 +20,11 @@ import lombok.Setter;
 @Table(name = "events")
 public class Events extends BaseModel {
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "group_id", nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "group_id", nullable = true)
     private Groups group;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "discipline_id", nullable = true)
     private Disciplines discipline;
 
