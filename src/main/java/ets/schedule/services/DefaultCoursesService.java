@@ -37,9 +37,9 @@ public class DefaultCoursesService implements CoursesService {
 
     @Override
     public HttpEntity<CourseGetResponse> createCourse(CoursePayload payload) {
-        // if(userSession.getProfileRole() != ProfileRole.Admin) {
-        //     throw new ApplicationException(403, "User privilege level required not attended.");
-        // }
+        if(userSession.getProfileRole() != ProfileRole.Admin) {
+            throw new ApplicationException(403, "User privilege level required not attended.");
+        }
         var newCourse = Courses.build(payload.name(), payload.description());
         courseRepository.save(newCourse);
 
