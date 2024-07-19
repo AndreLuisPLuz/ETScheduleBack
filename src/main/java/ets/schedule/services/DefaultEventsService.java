@@ -93,43 +93,47 @@ public class DefaultEventsService implements EventsService {
 
     @Override
     public HttpEntity<EventGetResponse> createEvent(EventPayload payload) {
-        var profile = profilesJPARepository.findById(userSession.getProfileId())
-                .orElseThrow(() -> new ApplicationException(403, "User profile not found."));
+        var event = new Events();
+        event.setStartsAt(formatDateFromString(payload.startsAt()));
+        event.setEndsAt(formatDateFromString(payload.endsAt()));
+        event.setDescription(payload.description());
 
-        if(userSession.getProfileRole() == ProfileRole.Student) {
-            throw new ApplicationException(403, "User does not have permission to create events.");
-        }
+        if (payload.disciplineId().isPresent()) {
+            var discipline = disciplinesJPARepository.findById(payload.disciplineId().get())
+                .orElseThrow(() -> 
+                    new ApplicationException(404, "Discipline not found."));
+            
+            var role = userSession.getProfileRole();
 
-        if(userSession.getProfileRole() == ProfileRole.Instructor) {
-            var discipline = disciplinesJPARepository.findById(payload.disciplineId())
-                    .orElseThrow(() -> new ApplicationException(404, "Discipline not found."));
-
-            if(!profile.getDisciplines().contains(discipline)) {
-                throw new ApplicationException(403, "User does not have permission to create event outside their disciplines.");
+            if (role == ProfileRole.Instructor) {
+                var profile = profilesJPARepository.findById(
+                        userSession.getProfileId()).get();
+    
+                if (!profile.getDisciplines().contains(discipline)) {
+                    throw new ApplicationException(
+                        403, 
+                        "User does not have permission to create event outside their disciplines.");
+                }
             }
+
+            event.setDiscipline(discipline);
+
+        } else if (payload.groupId().isPresent()) {
+            var group = groupsJPARepository.findById(payload.disciplineId().get())
+                .orElseThrow(() ->
+                    new ApplicationException(404, "Group not found."));
+            
+            event.setGroup(group);
+
+        } else {
+            throw new ApplicationException(400, "Event must be bound either to a group or a discipline.");
         }
 
-        var group = groupsJPARepository.findById(payload.groupId()).
-                orElseThrow(() -> new ApplicationException(404, "Group could not be found."));
-
-        var discipline = disciplinesJPARepository.findById(payload.disciplineId())
-                .orElseThrow(() -> new ApplicationException(404, "Discipline could not be found."));
-
-        var newEvent = Events.build(
-                group,
-                discipline,
-                formatDateFromString(payload.startsAt()),
-                formatDateFromString(payload.endsAt()),
-                payload.description());
-
-        group.getEvents().add(newEvent);
-        discipline.getEvents().add(newEvent);
-
-        eventsJPARepository.save(newEvent);
+        var savedEvent = eventsJPARepository.save(event);
 
         return new HttpEntity<>(
                 HttpStatus.valueOf(201),
-                EventGetResponse.buildFromEntity(newEvent)
+                EventGetResponse.buildFromEntity(savedEvent)
         );
     }
 

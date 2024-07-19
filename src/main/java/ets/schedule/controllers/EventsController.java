@@ -1,8 +1,11 @@
 package ets.schedule.controllers;
 
+import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.payloads.event.EventPayload;
 import ets.schedule.data.responses.get.EventGetResponse;
+import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.EventsService;
+import ets.schedule.sessions.UserSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +15,11 @@ import java.util.List;
 
 @RestController
 public class EventsController {
-
     @Autowired
     private EventsService eventsService;
+
+    @Autowired
+    private UserSession userSession;
 
     @GetMapping("/api/v1/event")
     private ResponseEntity<List<EventGetResponse>> getAllEvents(@RequestParam Integer month, @RequestParam Integer year) {
@@ -24,6 +29,12 @@ public class EventsController {
 
     @PostMapping("/api/v1/event")
     private ResponseEntity<EventGetResponse> createEvent(@RequestBody EventPayload obj) {
+        var role = userSession.getProfileRole();
+
+        if(role == ProfileRole.Student) {
+            throw new ApplicationException(403, "User does not have permission to create events.");
+        }
+
         var response = eventsService.createEvent(obj);
         return ResponseEntity.status(response.statusCode()).body(response.data());
     }
