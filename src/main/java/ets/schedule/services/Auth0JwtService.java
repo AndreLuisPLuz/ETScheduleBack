@@ -67,8 +67,8 @@ public class Auth0JwtService implements AuthService {
         var passwordsMatch = passwordService.matchPasswords(
                 payload.password(),
                 user.getPassword());
-
-        if (passwordsMatch)
+                
+        if (!passwordsMatch)
             throw new ApplicationException(400, "Passwords do not match.");
 
         List<ProfileResponse> profileData = user.getProfiles()
