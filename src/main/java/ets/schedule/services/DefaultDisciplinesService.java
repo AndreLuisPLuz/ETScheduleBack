@@ -134,6 +134,7 @@ public class DefaultDisciplinesService implements DisciplinesService {
                 .orElseThrow(() -> new ApplicationException(403, "Instructor could not be found."));
 
         var newDiscipline = Disciplines.build(group, instructor, course, payload.semester());
+        newDiscipline.setColorCode(payload.colorCode());
 
         instructor.getDisciplines().add(newDiscipline);
         course.getDisciplines().add(newDiscipline);
