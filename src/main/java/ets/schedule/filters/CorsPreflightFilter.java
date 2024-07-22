@@ -19,8 +19,6 @@ public class CorsPreflightFilter implements Filter {
             IOException,
             ServletException {
 
-        System.out.println("Fui");
-
         var req = (HttpServletRequest) request;
         var res = (HttpServletResponse) response;
         

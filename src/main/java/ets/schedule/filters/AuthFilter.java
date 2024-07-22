@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 
+import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.AuthService;
 import ets.schedule.sessions.UserSession;
@@ -35,8 +36,12 @@ public class AuthFilter implements Filter {
         var req = (HttpServletRequest) request;
         var res = (HttpServletResponse) response;
 
-        var auth = req.getHeader("Authorization");
-        System.out.println("auth: " + auth);
+        String auth;
+        try {
+            auth = req.getHeader("Authorization");
+        } catch (NullPointerException ex) {
+            throw new ApplicationException(400, "Missing authorization header.");
+        }
 
         DecodedJWT decodedJWT;
         decodedJWT = authService.decodeTokenAsync(auth);
