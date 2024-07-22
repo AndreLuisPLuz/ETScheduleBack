@@ -4,6 +4,7 @@ import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.HttpEntity;
 import ets.schedule.data.HttpList;
 import ets.schedule.data.payloads.event.EventPayload;
+import ets.schedule.data.payloads.event.EventUpdatePayload;
 import ets.schedule.data.responses.get.EventGetResponse;
 import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.EventsService;
@@ -15,6 +16,7 @@ import ets.schedule.repositories.ProfilesJPARepository;
 import ets.schedule.sessions.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -125,6 +127,26 @@ public class DefaultEventsService implements EventsService {
                 HttpStatus.valueOf(201),
                 EventGetResponse.buildFromEntity(savedEvent)
         );
+    }
+
+    @Override
+    public HttpEntity<Void> updateEvent(Long id, EventUpdatePayload payload) {
+        var eventFetch = eventsJPARepository.findById(id);
+
+        if (!eventFetch.isPresent())
+            throw new ApplicationException(404, "Event not found.");
+        
+        var event = eventFetch.get();
+        event.setStartsAt(formatDateFromString(payload.startsAt()));
+        event.setEndsAt(formatDateFromString(payload.endsAt()));
+
+        try {
+            eventsJPARepository.save(event);
+            return new HttpEntity<Void>(HttpStatusCode.valueOf(200), null);
+        } catch (Exception ex) {
+            return new HttpEntity<Void>(HttpStatusCode.valueOf(400), null);
+        }
+
     }
 
     public Date formatDateFromString(String dateString) {

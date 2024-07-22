@@ -2,6 +2,7 @@ package ets.schedule.controllers;
 
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.payloads.event.EventPayload;
+import ets.schedule.data.payloads.event.EventUpdatePayload;
 import ets.schedule.data.responses.get.EventGetResponse;
 import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.EventsService;
@@ -36,6 +37,15 @@ public class EventsController {
         }
 
         var response = eventsService.createEvent(obj);
+        return ResponseEntity.status(response.statusCode()).body(response.data());
+    }
+
+    @PatchMapping("/api/v1/event/{id}")
+    private ResponseEntity<Void> updateEvent(
+            @PathVariable Long id,
+            @RequestBody EventUpdatePayload payload
+    ) {
+        var response = eventsService.updateEvent(id, payload);
         return ResponseEntity.status(response.statusCode()).body(response.data());
     }
 }
