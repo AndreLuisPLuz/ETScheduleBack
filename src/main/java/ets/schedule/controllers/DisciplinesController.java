@@ -28,7 +28,9 @@ public class DisciplinesController {
     }
 
     @PostMapping("/api/v1/discipline")
-    public ResponseEntity<DisciplineGetResponse> createDiscipline(@RequestBody DisciplinePayload obj) {
+    public ResponseEntity<DisciplineGetResponse> createDiscipline(
+            @RequestBody DisciplinePayload obj
+    ) {
         var response = disciplinesService.createDiscipline(obj);
         return ResponseEntity.status(response.statusCode()).body(response.data());
     }
