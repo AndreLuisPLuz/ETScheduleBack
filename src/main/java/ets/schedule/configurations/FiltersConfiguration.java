@@ -7,11 +7,27 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 import ets.schedule.filters.AuthFilter;
+import ets.schedule.filters.CorsPreflightFilter;
 
 @Configuration
 public class FiltersConfiguration {
     @Autowired
     AuthFilter authFilter;
+
+    @Autowired
+    CorsPreflightFilter corsPreflightFilter;
+
+    @Bean
+    @Scope("singleton")
+    protected FilterRegistrationBean<CorsPreflightFilter> registerCorsPreflightFilter() {
+        var registrationBean = new FilterRegistrationBean<CorsPreflightFilter>();
+
+        registrationBean.setFilter(corsPreflightFilter);
+        registrationBean.addUrlPatterns("/*");
+        registrationBean.setOrder(1);
+
+        return registrationBean;
+    }
 
     @Bean
     @Scope("singleton")
@@ -28,7 +44,7 @@ public class FiltersConfiguration {
             "/api/v1/report/*",
             "/api/v1/instructor/*"
         );
-        registrationBean.setOrder(1);
+        registrationBean.setOrder(2);
 
         return registrationBean;
     }
