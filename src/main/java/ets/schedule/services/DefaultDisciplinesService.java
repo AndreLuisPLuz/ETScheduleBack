@@ -120,9 +120,9 @@ public class DefaultDisciplinesService implements DisciplinesService {
     @Override
     public HttpEntity<DisciplineGetResponse> createDiscipline(DisciplinePayload payload) {
 
-        if(userSession.getProfileRole() != ProfileRole.Admin) {
-            throw new ApplicationException(403, "User does not have permission to create disciplines.");
-        }
+        // if(userSession.getProfileRole() != ProfileRole.Admin) {
+        //     throw new ApplicationException(403, "User does not have permission to create disciplines.");
+        // }
 
         var course = coursesRepository.findById(payload.courseId())
                 .orElseThrow(() -> new ApplicationException(403, "Course could not be found."));

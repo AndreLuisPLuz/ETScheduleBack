@@ -165,7 +165,7 @@ public class Auth0JwtService implements AuthService {
             JWTVerifier verifier = verification.build();
             return verifier.verify(token);
         } catch (JWTVerificationException ex) {
-            throw new ApplicationException(403, "Invalid token.");
+            throw new ApplicationException(403, "Invalid token.", ex);
         }
     }
 }

@@ -36,6 +36,7 @@ public class AuthFilter implements Filter {
         var res = (HttpServletResponse) response;
 
         var auth = req.getHeader("Authorization");
+        System.out.println("auth: " + auth);
 
         DecodedJWT decodedJWT;
         decodedJWT = authService.decodeTokenAsync(auth);
