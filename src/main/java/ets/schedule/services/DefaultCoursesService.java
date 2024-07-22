@@ -2,8 +2,8 @@ package ets.schedule.services;
 
 import ets.schedule.Exceptions.ApplicationException;
 import ets.schedule.data.responses.get.CourseGetResponse;
-import ets.schedule.enums.ProfileRole;
-import ets.schedule.sessions.UserSession;
+// import ets.schedule.enums.ProfileRole;
+// import ets.schedule.sessions.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 
@@ -19,8 +19,8 @@ public class DefaultCoursesService implements CoursesService {
     @Autowired
     private CoursesJPARepository courseRepository;
 
-    @Autowired
-    private UserSession userSession;
+    // @Autowired
+    // private UserSession userSession;
 
     @Override
     public HttpList<CourseGetResponse> getAll() {
@@ -37,9 +37,9 @@ public class DefaultCoursesService implements CoursesService {
 
     @Override
     public HttpEntity<CourseGetResponse> createCourse(CoursePayload payload) {
-        if(userSession.getProfileRole() != ProfileRole.Admin) {
-            throw new ApplicationException(403, "User privilege level required not attended.");
-        }
+        // if(userSession.getProfileRole() != ProfileRole.Admin) {
+        //     throw new ApplicationException(403, "User privilege level required not attended.");
+        // }
         var newCourse = Courses.build(payload.name(), payload.description());
         courseRepository.save(newCourse);
 
@@ -51,9 +51,9 @@ public class DefaultCoursesService implements CoursesService {
 
     @Override
     public HttpEntity<CourseGetResponse> editCourse(Long id, CoursePayload payload) {
-        if(userSession.getProfileRole() != ProfileRole.Admin) {
-            throw new ApplicationException(403, "User privilege level required not attended.");
-        }
+        // if(userSession.getProfileRole() != ProfileRole.Admin) {
+        //     throw new ApplicationException(403, "User privilege level required not attended.");
+        // }
 
         var course = courseRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(404, "Course not found."));
