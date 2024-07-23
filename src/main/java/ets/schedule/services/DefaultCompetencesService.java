@@ -51,7 +51,7 @@ public class DefaultCompetencesService implements CompetencesService{
     }
 
     @Override
-    public HttpEntity<CompetenceGetResponse> editCompetences(Long id, CompetencePayload payload) {
+    public HttpEntity<CompetenceGetResponse> editCompetence(Long id, CompetencePayload payload) {
 
         var competence = competencesRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(404, "Competence not found."));
@@ -60,16 +60,17 @@ public class DefaultCompetencesService implements CompetencesService{
             competence.setName(payload.name());
         }
 
-        if (payload.weight() != null && !payload.weight().isEmpty()) {
-            competence.setCompetence(payload.weight());
+        if (payload.weight() != null) {
+            competence.setWeight(payload.weight());
         }
 
         competencesRepository.save(competence);
 
         return new HttpEntity<>(
             HttpStatusCode.valueOf(201),
-                CourseGetResponse.buildFromEntity(competence)
+            CompetenceGetResponse.buildFromEntity(competence)
         );
     }
+
 
 }

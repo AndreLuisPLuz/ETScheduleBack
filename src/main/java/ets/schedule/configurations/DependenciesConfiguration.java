@@ -78,4 +78,10 @@ public class DependenciesConfiguration {
     protected StudentReportService studentReportService() {
         return new DefaultStudentReportService();
     }
+
+    @Bean
+    @Scope("singleton")
+    protected InstructorService instructorService() {
+        return new DefaultInstructorService();
+    }
 }

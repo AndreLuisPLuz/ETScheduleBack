@@ -13,6 +13,9 @@ import ets.schedule.repositories.*;
 import ets.schedule.sessions.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.List;
 
 public class DefaultDisciplinesService implements DisciplinesService {
@@ -120,8 +123,14 @@ public class DefaultDisciplinesService implements DisciplinesService {
     @Override
     public HttpEntity<DisciplineGetResponse> createDiscipline(DisciplinePayload payload) {
 
-        if(userSession.getProfileRole() != ProfileRole.Admin) {
-            throw new ApplicationException(403, "User does not have permission to create disciplines.");
+        // if(userSession.getProfileRole() != ProfileRole.Admin) {
+        //     throw new ApplicationException(403, "User does not have permission to create disciplines.");
+        // }
+        var objMapper = new ObjectMapper();
+        try {
+                System.out.println(objMapper.writeValueAsString(payload));
+        } catch (Exception ex) {
+                System.out.println(ex.getMessage());
         }
 
         var course = coursesRepository.findById(payload.courseId())
@@ -134,6 +143,7 @@ public class DefaultDisciplinesService implements DisciplinesService {
                 .orElseThrow(() -> new ApplicationException(403, "Instructor could not be found."));
 
         var newDiscipline = Disciplines.build(group, instructor, course, payload.semester());
+        newDiscipline.setColorCode(payload.colorCode());
 
         instructor.getDisciplines().add(newDiscipline);
         course.getDisciplines().add(newDiscipline);

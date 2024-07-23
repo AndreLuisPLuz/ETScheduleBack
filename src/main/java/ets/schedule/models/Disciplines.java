@@ -29,6 +29,9 @@ public class Disciplines extends BaseModel {
     @Column(name = "semester", nullable = false)
     private Integer semester;
 
+    @Column(name = "color_code", nullable = true)
+    private String colorCode;
+
     @OneToMany(mappedBy = "discipline")
     private List<Competences> competences;
 
