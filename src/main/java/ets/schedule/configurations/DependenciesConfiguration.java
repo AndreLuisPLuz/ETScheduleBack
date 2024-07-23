@@ -84,4 +84,10 @@ public class DependenciesConfiguration {
     protected InstructorService instructorService() {
         return new DefaultInstructorService();
     }
+
+    @Bean
+    @Scope("singleton")
+    protected CompetencesService competencesService() {
+        return new DefaultCompetencesService();
+    }
 }
