@@ -75,7 +75,7 @@ public class DefaultGroupService implements GroupsService {
     }
 
     public Date formatDateFromString(String dateString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         dateFormat.setLenient(false);
 
