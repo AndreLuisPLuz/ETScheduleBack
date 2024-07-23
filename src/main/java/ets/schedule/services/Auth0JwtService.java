@@ -17,7 +17,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 
@@ -68,8 +67,8 @@ public class Auth0JwtService implements AuthService {
         var passwordsMatch = passwordService.matchPasswords(
                 payload.password(),
                 user.getPassword());
-                
-        if (!passwordsMatch)
+
+        if (passwordsMatch)
             throw new ApplicationException(400, "Passwords do not match.");
 
         List<ProfileResponse> profileData = user.getProfiles()
@@ -98,8 +97,7 @@ public class Auth0JwtService implements AuthService {
         var passwordsMatch = passwordService.matchPasswords(
                 payload.password(),
                 user.getPassword());
-        
-                
+
         if (!passwordsMatch)
             throw new ApplicationException(400, "Passwords do not match.");
 
@@ -109,11 +107,11 @@ public class Auth0JwtService implements AuthService {
         } catch (IllegalArgumentException ex) {
             throw new ApplicationException(400, "Invalid user role.");
         }
-        
+
         var profiles = profileRepo.findByUser(user)
-            .stream()
-            .filter(p -> p.getRole().equals(profileRole))
-            .collect(Collectors.toList());
+                .stream()
+                .filter(p -> p.getRole().equals(profileRole))
+                .collect(Collectors.toList());
 
         if (profiles.size() == 0)
             throw new ApplicationException(400, "Role not atributed to user.");
@@ -136,11 +134,7 @@ public class Auth0JwtService implements AuthService {
             throw new ApplicationException(500, "Claims couldn't be converted.");
         }
 
-        var response = new AuthResponse(
-            "Successful login.",
-            token,
-            user.getId()
-        );
+        var response = new AuthResponse("Successful login.", token, user.getId());
 
         return new HttpEntity<AuthResponse>(
                 HttpStatusCode.valueOf(200),
@@ -166,7 +160,7 @@ public class Auth0JwtService implements AuthService {
             JWTVerifier verifier = verification.build();
             return verifier.verify(token);
         } catch (JWTVerificationException ex) {
-            throw new ApplicationException(403, "Invalid token.", ex);
+            throw new ApplicationException(403, "Invalid token.");
         }
     }
 }

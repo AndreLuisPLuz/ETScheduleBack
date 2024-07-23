@@ -1,7 +1,6 @@
 package ets.schedule.configurations;
 
-import ets.schedule.filters.AuthFilter;
-import ets.schedule.filters.CorsPreflightFilter;
+ import ets.schedule.filters.AuthFilter;
 import ets.schedule.integrations.flask.DefaultFlaskIntegration;
 import ets.schedule.interfaces.integrations.FlaskIntegration;
 import ets.schedule.interfaces.services.*;
@@ -22,23 +21,17 @@ public class DependenciesConfiguration {
         return new PBKDF2PasswordService();
     }
 
-    @Bean
-    @Scope("singleton")
-    protected AuthService authService() {
-        return new Auth0JwtService();
-    }
+     @Bean
+     @Scope("singleton")
+     protected AuthService authService() {
+         return new Auth0JwtService();
+     }
 
-    @Bean
-    @Scope("singleton")
-    protected CorsPreflightFilter corsPreflightFilter() {
-        return new CorsPreflightFilter();
-    }
-
-    @Bean
-    @Scope("singleton")
-    protected AuthFilter authFilter() {
-        return new AuthFilter();
-    }
+     @Bean
+     @Scope("singleton")
+     protected AuthFilter authFilter() {
+         return new AuthFilter();
+     }
 
     @Bean
     @RequestScope
@@ -98,5 +91,11 @@ public class DependenciesConfiguration {
     @Scope("singleton")
     protected ObjectMapper objectMapper() {
         return new ObjectMapper();
+    }
+
+    @Bean
+    @Scope("singleton")
+    protected CompetencesService competencesService() {
+        return new DefaultCompetencesService();
     }
 }

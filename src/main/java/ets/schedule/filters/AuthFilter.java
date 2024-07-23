@@ -1,8 +1,8 @@
-package ets.schedule.filters;
+ package ets.schedule.filters;
 
-import java.io.IOException;
+ import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,9 +20,9 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class AuthFilter implements Filter {
-    @Autowired
-    AuthService authService;
+ public class AuthFilter implements Filter {
+     @Autowired
+     AuthService authService;
 
     @Autowired
     UserSession userSession;
@@ -30,16 +30,16 @@ public class AuthFilter implements Filter {
     @Autowired
     ObjectMapper objMapper;
 
-    public void doFilter(
-            ServletRequest request,
-            ServletResponse response,
-            FilterChain chain)
-        throws
-            IOException,
-            ServletException {
+     public void doFilter(
+             ServletRequest request,
+             ServletResponse response,
+             FilterChain chain)
+         throws
+             IOException,
+             ServletException {
 
-        var req = (HttpServletRequest) request;
-        var res = (HttpServletResponse) response;
+         var req = (HttpServletRequest) request;
+         var res = (HttpServletResponse) response;
 
         String auth;
         try {
@@ -65,16 +65,16 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        var userId = decodedJWT.getClaim("userId").asString();
-        var profileId = decodedJWT.getClaim("profileId").asString();
-        var profileRole = ProfileRole.getRole(
-            decodedJWT.getClaim("role").asString()
-        );
+         var userId = decodedJWT.getClaim("userId").asString();
+         var profileId = decodedJWT.getClaim("profileId").asString();
+         var profileRole = ProfileRole.getRole(
+             decodedJWT.getClaim("role").asString()
+         );
 
-        userSession.setUserId(Long.valueOf(userId));
-        userSession.setProfileId(Long.valueOf(profileId));
-        userSession.setProfileRole(profileRole);
+         userSession.setUserId(Long.valueOf(userId));
+         userSession.setProfileId(Long.valueOf(profileId));
+         userSession.setProfileRole(profileRole);
 
-        chain.doFilter(req, res);
-    }
-}
+         chain.doFilter(req, res);
+     }
+ }
