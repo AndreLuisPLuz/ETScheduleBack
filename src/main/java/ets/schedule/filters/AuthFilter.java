@@ -5,8 +5,10 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ets.schedule.Exceptions.ApplicationException;
+import ets.schedule.data.responses.ErrorResponse;
 import ets.schedule.enums.ProfileRole;
 import ets.schedule.interfaces.services.AuthService;
 import ets.schedule.sessions.UserSession;
@@ -25,6 +27,9 @@ public class AuthFilter implements Filter {
     @Autowired
     UserSession userSession;
 
+    @Autowired
+    ObjectMapper objMapper;
+
     public void doFilter(
             ServletRequest request,
             ServletResponse response,
@@ -40,11 +45,25 @@ public class AuthFilter implements Filter {
         try {
             auth = req.getHeader("Authorization");
         } catch (NullPointerException ex) {
-            throw new ApplicationException(400, "Missing authorization header.");
+            var errorResponse = new ErrorResponse("Missing Authorization header.");
+
+            res.setStatus(400);
+            res.getOutputStream().print(objMapper.writeValueAsString(errorResponse));
+
+            return;
         }
 
         DecodedJWT decodedJWT;
-        decodedJWT = authService.decodeTokenAsync(auth);
+        try {
+            decodedJWT = authService.decodeTokenAsync(auth);
+        } catch (ApplicationException ex) {
+            var errorResponse = new ErrorResponse("Invalid token.");
+
+            res.setStatus(403);
+            res.getOutputStream().print(objMapper.writeValueAsString(errorResponse));
+
+            return;
+        }
 
         var userId = decodedJWT.getClaim("userId").asString();
         var profileId = decodedJWT.getClaim("profileId").asString();

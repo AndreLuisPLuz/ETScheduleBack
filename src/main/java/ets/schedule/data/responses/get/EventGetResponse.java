@@ -11,17 +11,22 @@ public record EventGetResponse(
         Date startsAt,
         Date endsAt,
         String description,
+        String colorCode,
         Date createdAt,
         Date updatedAt
 ) {
     public static EventGetResponse buildFromEntity(Events event) {
         var groupId = event.getGroup() == null
-                ? null
-                : event.getGroup().getId();
+            ? null
+            : event.getGroup().getId();
         
         var disciplineId = event.getDiscipline() == null
-                ? null
-                : event.getDiscipline().getId();
+            ? null
+            : event.getDiscipline().getId();
+
+        var colorCode = event.getDiscipline() == null
+            ? null
+            : event.getDiscipline().getColorCode();
 
         return new EventGetResponse(
                 event.getId(),
@@ -30,6 +35,7 @@ public record EventGetResponse(
                 event.getStartsAt(),
                 event.getEndsAt(),
                 event.getDescription(),
+                colorCode,
                 event.getCreatedAt(),
                 event.getUpdatedAt()
         );

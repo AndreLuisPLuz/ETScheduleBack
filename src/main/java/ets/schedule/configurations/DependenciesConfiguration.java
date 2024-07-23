@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.context.annotation.RequestScope;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Configuration
 public class DependenciesConfiguration {
     @Bean
@@ -90,5 +92,11 @@ public class DependenciesConfiguration {
     @Scope("singleton")
     protected InstructorService instructorService() {
         return new DefaultInstructorService();
+    }
+
+    @Bean
+    @Scope("singleton")
+    protected ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }
