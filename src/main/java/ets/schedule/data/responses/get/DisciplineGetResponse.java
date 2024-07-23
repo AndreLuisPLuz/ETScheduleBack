@@ -11,6 +11,7 @@ public record DisciplineGetResponse(
         String instructor,
         String course,
         Integer semester,
+        String color, 
         Date createdAt,
         Date updatedAt
 ) {
@@ -22,6 +23,7 @@ public record DisciplineGetResponse(
                 discipline.getInstructor().getUser().getFullName(),
                 discipline.getCourse().getName(),
                 discipline.getSemester(),
+                discipline.getColorCode(),
                 discipline.getCreatedAt(),
                 discipline.getUpdatedAt()
         );
